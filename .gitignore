@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+test.cpp
+vector3.hpp
+a.out
