@@ -36,8 +36,7 @@ namespace ft {
         typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 	private:
-		// Fix 3rd param of tree
-        rb_tree<key_type, mapped_type, key_type, key_compare, allocator_type> _tree;
+        rb_tree<key_type, value_type, identity<value_type>, key_compare, allocator_type> _tree;
 
     public:
 		set() {}

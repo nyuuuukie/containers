@@ -54,7 +54,7 @@ namespace ft {
 
 	private:
 		// Fix 3rd param of tree
-        rb_tree<key_type, mapped_type, key_type, key_compare, allocator_type> _tree;
+        rb_tree<key_type, mapped_type, select1st<value_type>, key_compare, allocator_type> _tree;
 
     public:
 		map() {}
