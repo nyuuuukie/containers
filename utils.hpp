@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 
 namespace ft {
@@ -6,4 +8,5 @@ namespace ft {
 	{
 	    return static_cast<u_int64_t>(1U << (static_cast<u_int64_t>(log2(capacity)) + 1));
 	}
+
 }

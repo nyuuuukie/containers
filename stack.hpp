@@ -1,11 +1,10 @@
 #pragma once
 
 #include "vector.hpp"
-#include <stack>
 
 namespace ft {
 
-	template < class T, class Container = ft::vector<T> >
+	template <class T, class Container = ft::vector<T> >
 	class stack {
 
 		// Member types

@@ -31,8 +31,8 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-        typedef ft::normal_iterator<value_type>         iterator;
-        typedef ft::normal_iterator<const value_type>   const_iterator;
+        typedef ft::rb_tree_iterator<value_type>        iterator;
+        typedef ft::rb_tree_iterator<const value_type>  const_iterator;
         typedef ft::reverse_iterator<iterator>          reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 

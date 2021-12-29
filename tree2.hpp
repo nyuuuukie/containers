@@ -146,21 +146,55 @@ namespace ft {
 			typedef const rb_tree_node<T>*	const_link_type;
 		
 		public:
-			typedef Key 				key_type;
-			typedef T 					value_type;
-			typedef value_type* 		pointer;
-			typedef const value_type* 	const_pointer;
-			typedef value_type& 		reference;
-			typedef const value_type& 	const_reference;
-			typedef size_t 				size_type;
-			typedef ptrdiff_t 			difference_type;
-			typedef Alloc 				allocator_type;
+			typedef Key 					key_type;
+			typedef T 						value_type;
+			typedef value_type* 			pointer;
+			typedef const value_type* 		const_pointer;
+			typedef value_type& 			reference;
+			typedef const value_type& 		const_reference;
+			typedef size_t 					size_type;
+			typedef ptrdiff_t 				difference_type;
+			typedef Alloc 					allocator_type;
 
 			allocator_type get_allocator() const {
 				return allocator_type()
 			}
 
 		protected:
+			node *_root;
+
+		 	iterator end() {
+	            return ++rb_tree_node::max(_root->right);
+	        }
+	        
+	        iterator begin() {
+				return rb_tree_node::min(_root->left);
+	        }
+	        
+	        reverse_iterator rend() {
+	            return _tree.rend();
+	        }
+	        
+	        reverse_iterator rbegin() {
+	            return _tree.rbegin();
+	        }
+	        
+	        const_iterator end() const {
+	            return _tree.end();
+	        }
+	        
+	        const_iterator begin() const {
+	            return _tree.begin();
+	        }
+	        
+	        const_reverse_iterator rend() const {
+	            return _tree.rend();
+	        }
+	        
+        const_reverse_iterator rbegin() const {
+			//end, begin, rbegin, rend x2
+			//iterator find(Key key)
+			// 
 			link_type get_node()
 			{ 
 				return _Alloc_traits::allocate(_M_get_Node_allocator(), 1);
@@ -205,6 +239,7 @@ namespace ft {
 
 				return tmp;
 			}
+
 	};
 
 };
