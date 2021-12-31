@@ -270,7 +270,7 @@ class vector {
 
 			for (; n != 0; n--)
 			{
-				std::cout << "here:" << n << " " << val << std::endl;
+				//std::cout << "here:" << n << " " << val << std::endl;
             	_allocator.construct(shiftedEnd.base(), *lastInserted);
             	_allocator.destroy(lastInserted.base());
 				_allocator.construct(lastInserted.base(), val);
@@ -283,7 +283,7 @@ class vector {
 
 		void __realloc_insert_impl(iterator position, size_type n, const value_type& val)
 		{
-			size_type newCapacity = ft::nextPowerOf2(size() + n + 1);
+			size_type newCapacity = ft::__next_capacity__(size());
 			//std::cout << newCapacity << std::endl;
 			pointer start = _allocator.allocate(newCapacity);
 			pointer finish = start;
@@ -360,7 +360,7 @@ class vector {
 	    	typename enable_if<are_same<typename is_integral<InputIterator>::value, false_type>::value, InputIterator>::type first, 
 			typename enable_if<are_same<typename is_integral<InputIterator>::value, false_type>::value, InputIterator>::type last)
 		{
-			size_type newCapacity = nextPowerOf2(size() + n + 1);
+			size_type newCapacity = __next_capacity__(size());
 			pointer start = _allocator.allocate(newCapacity);
 			pointer finish = start;
 
@@ -454,6 +454,15 @@ class vector {
         allocator_type get_allocator() const {
             return allocator_type(_allocator);
         }
+
+
+		// Helpers:
+		private:
+		inline u_int64_t
+		__next_capacity__(u_int64_t capacity)
+		{
+		    return static_cast<u_int64_t>(1U << static_cast<u_int64_t>(log2(capacity) + 1));
+		}
     };
 
     // Non-member function overloads
