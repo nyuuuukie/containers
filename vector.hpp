@@ -1,13 +1,11 @@
 #pragma once
 
+#include <cmath>
 #include <memory>
 
 #include "is_integral.hpp"
-
 #include "normal_iterator.hpp"
 #include "reverse_iterator.hpp"
-
-#include "utils.hpp"
 
 namespace ft {
 
@@ -283,7 +281,7 @@ class vector {
 
 		void __realloc_insert_impl(iterator position, size_type n, const value_type& val)
 		{
-			size_type newCapacity = ft::__next_capacity__(size());
+			size_type newCapacity = __next_capacity__(size());
 			//std::cout << newCapacity << std::endl;
 			pointer start = _allocator.allocate(newCapacity);
 			pointer finish = start;
@@ -391,10 +389,8 @@ class vector {
         
         iterator erase(iterator first, iterator last) {
 
-			// Incorrect
-			//size_type n = (size_type)ft::distance(first, last);
-			size_type n = last - first; 
-			std::cout << "n: " << last - first << std::endl; 
+			size_type n = (size_type)ft::distance(first, last);
+			//std::cout << "n: " << last - first << std::endl; 
 			
 			while (first != last) {
 				_allocator.destroy(first.base());
@@ -411,17 +407,6 @@ class vector {
 				}
 			}
 			_finish = _finish - n;
-
-			//pointer f = first.base();
-			//for (; f != last.base(); f++)
-			//{
-			//	pointer proto = f + n;
-			//	_allocator.destroy(f);
-			//	if (proto < _finish)
-			//		_allocator.construct(f, *(proto));
-			//	_finish--;
-			//}
-
 			return begin() + n;
         }
 
