@@ -47,25 +47,37 @@ namespace ft {
 	};
 
 
-	template<class Iterator>
-	typename std::iterator_traits<Iterator>::difference_type
-	distance(Iterator first, Iterator last)
-	{
-		if ( are_same<typename ft::iterator_traits<Iterator>::iterator_category, ft::random_access_iterator_tag>::value )
-		    return last - first;
-		else {
-		    typename iterator_traits<Iterator>::difference_type n;
-			for (n = 0; first != last; first++, n++);
-			return (n);
-		}
+	template<typename Iterator>
+    inline typename iterator_traits<Iterator>::iterator_category
+    iterator_category(const Iterator&) { 
+		return typename iterator_traits<Iterator>::iterator_category(); 
 	}
 
-	//template <class InputIterator>
-	//typename iterator_traits<InputIterator>::difference_type
-	//distance(InputIterator first, InputIterator last) {
-	//	typename iterator_traits<InputIterator>::difference_type n;
-	//	for (n = 0; first != last; first++, n++);
-	//	return (n);
-	//}
+	template<class It>
+	typename ft::iterator_traits<It>::difference_type 
+	_distance(It first, It last, ft::input_iterator_tag)
+	{
+	    typename ft::iterator_traits<It>::difference_type result = 0;
+	    while (first != last) {
+	        ++first;
+	        ++result;
+	    }
+	    return result;
+	}
+	 
+	template<class It>
+	typename ft::iterator_traits<It>::difference_type 
+	_distance(It first, It last, ft::random_access_iterator_tag)
+	{
+	    return last - first;
+	}
+
+	template<class It>
+	typename ft::iterator_traits<It>::difference_type 
+	distance(It first, It last)
+	{
+	    return _distance(first, last, ft::iterator_category(first));
+	}
+
 
 };

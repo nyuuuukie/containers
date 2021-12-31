@@ -24,8 +24,8 @@ namespace ft {
         : _current(T()) { }
 
 		explicit
-		normal_iterator(const T& iter)
-        : _current(iter) { }
+		normal_iterator(const T& ptr)
+        : _current(ptr) { }
 
         template<typename _Iter>
         normal_iterator( const normal_iterator<_Iter, 
@@ -50,7 +50,6 @@ namespace ft {
             return normal_iterator(_current++);
         }
 
-
         // Bidirectional iterator requirements
         normal_iterator& operator--() {
 		    --_current;
@@ -59,7 +58,7 @@ namespace ft {
 
         normal_iterator operator--(int) {
             return normal_iterator(_current--);
-        }
+	    }
 
 
         // Random access iterator requirements
@@ -132,7 +131,8 @@ namespace ft {
     inline typename normal_iterator<IteratorL, Container>::difference_type
     operator-( const normal_iterator<IteratorL, Container>& lhs,
 	     	   const normal_iterator<IteratorR, Container>& rhs)
-    { return lhs.base() - rhs.base(); }
+    { 
+		return lhs.base() - rhs.base(); }
 
 
     template <class Iterator, class Container>
@@ -175,7 +175,7 @@ namespace ft {
     inline typename normal_iterator<Iterator, Container>::difference_type
     operator-( const normal_iterator<Iterator, Container>& lhs, 
 	           const normal_iterator<Iterator, Container>& rhs) {
-        return rhs.base() - lhs.base();
+        return lhs.base() - rhs.base();
     }
 
     template <class Iterator, class Container>

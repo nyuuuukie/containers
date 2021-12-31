@@ -5,65 +5,77 @@
 
 namespace ft {
 
+	template<typename T, T __v>
+	struct integral_constant
+	{
+		static const T	                    value = __v;
+		typedef T                           value_type;
+		typedef integral_constant<T, __v>   type;
+		//const operator value_type() const { return value; }
+	};
+
+	typedef integral_constant<bool, true>     integral_true_type;
+	typedef integral_constant<bool, false>    integral_false_type;
+
 	template<typename>
 	struct __is_integral__
-	: public false_type { };
+	: public integral_false_type { };
 
 	template<>
 	struct __is_integral__<bool>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<char>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<signed char>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<unsigned char>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<char16_t>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<char32_t>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<short>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<unsigned short>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<int>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<unsigned int>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<long>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<unsigned long>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<long long>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<>
 	struct __is_integral__<unsigned long long>
-	: public true_type { };
+	: public integral_true_type { };
 
 	template<typename T>
 	struct is_integral

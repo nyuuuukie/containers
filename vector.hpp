@@ -7,6 +7,8 @@
 #include "normal_iterator.hpp"
 #include "reverse_iterator.hpp"
 
+#include "utils.hpp"
+
 namespace ft {
 
 template <typename T, typename Alloc = std::allocator<T> >
@@ -91,11 +93,11 @@ class vector {
         }
         
         const_iterator end() const {
-            return _finish;
+            return const_iterator(_finish);
         }
         
         const_iterator begin() const {
-            return _start;
+            return const_iterator(_start);
         }
         
         const_reverse_iterator rend() const {
@@ -236,72 +238,22 @@ class vector {
         }
 
         void push_back(const value_type& val) {
-            insert(end(), val);
+            insert(end(), 1, val);
         }
 
         void pop_back() {
-			erase(end() - 1);
+			if (size() > 0) {
+				erase(end() - 1);
+			}
         }
 
         iterator insert(iterator position, const value_type& val) {
+
 			size_type i = ft::distance(begin(), position);
 			insert(position, 1, val);
 			return begin() + i;
         }
 
-		//void insert(iterator position, size_type n, const value_type& val) {
-		//	if (n == 0)
-		//		return ;
-
-		//	if (size() + n < capacity()) {
-		//		iterator shiftedEnd = end() + n - 1;
-		//		iterator lastInserted = position + n;
-
-		//		for (; n != 0; n--)
-		//		{
-        //        	_allocator.construct(shiftedEnd.base(), *lastInserted);
-        //        	_allocator.destroy(lastInserted.base());
-		//			_allocator.construct(lastInserted.base(), val);
-
-		//			lastInserted--;
-		//			shiftedEnd--;
-		//			_finish++;
-		//		}
-		//	}
-		//	else if (size() + n >= capacity()) {
-
-		//		size_type newCapacity = nextPowerOf2(size() + n + 1);
-		//		std::cout << newCapacity << std::endl;
-		//		pointer start = _allocator.allocate(newCapacity);
-		//		pointer finish = start;
-
-		//		iterator it = begin();
-		//		for (; it != position; it++, finish++) {
-		//			std::cout << 1 << std::endl;
-		//			_allocator.construct(finish, *it);
-		//			_allocator.destroy(it.base());
-		//		}
-			
-		//		for (; n != 0; n--, finish++) {
-		//			std::cout << 2 << std::endl;
-		//			_allocator.construct(finish, val);
-		//		}
-
-		//		for (; it != end(); it++, finish++) {
-		//			std::cout << 3 << std::endl;
-		//			_allocator.construct(finish, *it);
-		//			_allocator.destroy(it.base());
-		//		}
-
-		//		if (_start != 0)
-		//			_allocator.deallocate(_start, capacity());
-
-		//		_start = start;
-        //        _finish = finish;
-        //        _storage_end = start + newCapacity;
-		//	}
-    	//}
-        
 		void insert(iterator position, size_type n, const value_type& val) {
 			if (n == 0)
 				return ;
@@ -313,11 +265,12 @@ class vector {
 
 		void __insert_impl(iterator position, size_type n, const value_type& val)
 		{
-			iterator shiftedEnd = end() + n - 1;
-			iterator lastInserted = position + n;
+			iterator shiftedEnd = end() + n;
+			iterator lastInserted = position + n - 1;
 
 			for (; n != 0; n--)
 			{
+				std::cout << "here:" << n << " " << val << std::endl;
             	_allocator.construct(shiftedEnd.base(), *lastInserted);
             	_allocator.destroy(lastInserted.base());
 				_allocator.construct(lastInserted.base(), val);
@@ -330,25 +283,25 @@ class vector {
 
 		void __realloc_insert_impl(iterator position, size_type n, const value_type& val)
 		{
-			size_type newCapacity = nextPowerOf2(size() + n + 1);
-			std::cout << newCapacity << std::endl;
+			size_type newCapacity = ft::nextPowerOf2(size() + n + 1);
+			//std::cout << newCapacity << std::endl;
 			pointer start = _allocator.allocate(newCapacity);
 			pointer finish = start;
 
 			iterator it = begin();
 			for (; it != position; it++, finish++) {
-				std::cout << 1 << std::endl;
+				//std::cout << 1 << std::endl;
 				_allocator.construct(finish, *it);
 				_allocator.destroy(it.base());
 			}
 		
 			for (; n != 0; n--, finish++) {
-				std::cout << 2 << std::endl;
+				//std::cout << 2 << std::endl;
 				_allocator.construct(finish, val);
 			}
 
 			for (; it != end(); it++, finish++) {
-				std::cout << 3 << std::endl;
+				//std::cout << 3 << std::endl;
 				_allocator.construct(finish, *it);
 				_allocator.destroy(it.base());
 			}
@@ -361,65 +314,29 @@ class vector {
             _storage_end = start + newCapacity;
 		}
 
-        //template <class InputIterator>
-        //void insert(iterator position, InputIterator first, InputIterator last) {
-		//	//size_type n = last - first;
-		//	size_type n = static_cast<size_type>(ft::distance(first, last));
-		//	if (n == 0)
-		//		return ;
-		//	if (size() + n < capacity()) {
-		//		iterator newEnd = end() + n - 1;
-		//		//iterator beg = first;
-		//		iterator lastInserted = position + n;
-		//		for (; first != last; first++)
-		//		{
-        //        	_allocator.construct(newEnd.base(), *lastInserted);
-        //        	_allocator.destroy(lastInserted.base());
-		//			_allocator.construct(lastInserted.base(), *first);
-		//			lastInserted--;
-		//			newEnd--;
-		//		}
-		//	}
-		//	if (size() + n >= capacity()) {
-		//		size_type newCapacity = nextPowerOf2(size() + n + 1);
-		//		pointer start = _allocator.allocate(newCapacity);
-		//		pointer finish = start;
-		//		iterator it = begin();
-		//		for (; it != position; it++, finish++) {
-		//			_allocator.construct(finish, *it);
-		//			_allocator.destroy(it.base());
-		//		}
-		//		for (; first != last; first++, finish++)
-		//			_allocator.construct(finish, *first);
-		//		for (; it != end(); it++, finish++) {
-		//			_allocator.construct(finish, *it);
-		//			_allocator.destroy(it.base());
-		//		}
-		//		_allocator.deallocate(_start, capacity());
-		//		_start = start;
-        //        _finish = start + size() + n + 1;
-        //        _storage_end = start + size() + n + 1;
-		//	}
-        //}
 
 		template <class InputIterator>
-        void insert(iterator position, InputIterator first, InputIterator last) {
+        void insert(iterator position, 
+			typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type first, 
+			typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type last) 
+		{
 			
-			size_type n = static_cast<size_type>(ft::distance(first, last));
+			size_type n = ft::distance(first, last);
 
 			if (n == 0)
 				return ;
 			else if (size() + n < capacity())
-				 __insert_impl(position, first, last);
+				__insert_impl(position, n, first, last);
 			else
-				__realloc_insert_impl(position, first, last);
+				__realloc_insert_impl(position, n, first, last);
 		}
 
 		template <class InputIterator>
 		void __insert_impl(
 			iterator position, 
-	    	typename enable_if<are_same<is_integral<InputIterator>, false_type>::value, InputIterator>::type first, 
-			typename enable_if<are_same<is_integral<InputIterator>, false_type>::value, InputIterator>::type last)
+			typename enable_if<are_same<typename is_integral<size_type>::type, integral_true_type>::value, size_type>::type n,
+	    	typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type first, 
+			typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type last)
 		{	
 			iterator newEnd = end() + n - 1;
 			iterator lastInserted = position + n;
@@ -433,13 +350,15 @@ class vector {
 				lastInserted--;
 				newEnd--;
 			}
+			_finish += n;
 		}
 
 		template <class InputIterator>
 		void __realloc_insert_impl(
 			iterator position, 
-	    	typename enable_if<are_same<is_integral<InputIterator>, false_type>::value, InputIterator>::type first, 
-			typename enable_if<are_same<is_integral<InputIterator>, false_type>::value, InputIterator>::type last)
+			size_type n,
+	    	typename enable_if<are_same<typename is_integral<InputIterator>::value, false_type>::value, InputIterator>::type first, 
+			typename enable_if<are_same<typename is_integral<InputIterator>::value, false_type>::value, InputIterator>::type last)
 		{
 			size_type newCapacity = nextPowerOf2(size() + n + 1);
 			pointer start = _allocator.allocate(newCapacity);
@@ -463,7 +382,7 @@ class vector {
 
 			_start = start;
             _finish = start + size() + n + 1;
-            _storage_end = start + size() + n + 1;
+            _storage_end = start + newCapacity;
 		}
 
         iterator erase(iterator position) {
@@ -472,17 +391,38 @@ class vector {
         
         iterator erase(iterator first, iterator last) {
 
-			size_type n = ft::distance(first, last);
+			// Incorrect
+			//size_type n = (size_type)ft::distance(first, last);
+			size_type n = last - first; 
+			std::cout << "n: " << last - first << std::endl; 
+			
+			while (first != last) {
+				_allocator.destroy(first.base());
+				first++;
+			}			
 
-			pointer f = first->_current;
-			for (; f != last; f++)
-			{
-				pointer proto = f + n;
-				_allocator.destroy(f);
-				if (proto < _finish)
-					_allocator.construct(f, *(proto));
+			if (last != end()) {
+				iterator newPlace = last - n;
+				while (last != end()) {
+					_allocator.construct(newPlace.base(), *last);
+					_allocator.destroy(last.base());
+					last++;
+					newPlace++;
+				}
 			}
-			_finish -= n;
+			_finish = _finish - n;
+
+			//pointer f = first.base();
+			//for (; f != last.base(); f++)
+			//{
+			//	pointer proto = f + n;
+			//	_allocator.destroy(f);
+			//	if (proto < _finish)
+			//		_allocator.construct(f, *(proto));
+			//	_finish--;
+			//}
+
+			return begin() + n;
         }
 
         void swap(vector &rhs) {
