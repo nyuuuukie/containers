@@ -27,9 +27,9 @@ namespace ft {
 		normal_iterator(const T& ptr)
         : _current(ptr) { }
 
-        template<typename _Iter>
-        normal_iterator( const normal_iterator<_Iter, 
-		typename enable_if< are_same<_Iter, typename Container::pointer>::value, Container>::type> &iter)
+        template<typename Iter>
+        normal_iterator( const normal_iterator<Iter, 
+		typename enable_if< are_same<Iter, typename Container::pointer>::value, Container>::type> &iter)
         : _current(iter.base()) { }
 
 

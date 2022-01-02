@@ -50,7 +50,10 @@ class vector {
         vector(InputIterator first, InputIterator last,
                const allocator_type& alloc = allocator_type())
         : _allocator(alloc), _start(), _finish(), _storage_end() {
-			insert(begin(), first, last);
+	
+			typedef typename is_integral<InputIterator>::type check_integral;
+
+			__insert(begin(), first, last, check_integral());
 		}
         
         vector(const vector& x) 
@@ -212,6 +215,15 @@ class vector {
         template <class InputIterator>
         void assign(InputIterator first, InputIterator last) {
 
+			typedef typename is_integral<InputIterator>::type check_integral;
+
+			_assign(first, last, check_integral());
+        }
+
+
+		//move to private
+		template <typename InputIterator>
+		void _assign(InputIterator first, InputIterator last, integral_false_type) {
 			size_type n = ft::distance(first, last);
 
 			if (n >= capacity()) {
@@ -222,7 +234,7 @@ class vector {
 				clear();
 				insert(begin(), first, last);
             }
-        }
+		}
         
         void assign(size_type n, const value_type& val) {
             if (n >= capacity()) {
@@ -236,7 +248,7 @@ class vector {
         }
 
         void push_back(const value_type& val) {
-            insert(end(), 1, val);
+            insert(end(), size_type(1), val);
         }
 
         void pop_back() {
@@ -245,6 +257,15 @@ class vector {
 			}
         }
 
+		void insert(iterator position, size_type n, const value_type& val) {
+			if (n == 0)
+				return ;
+			else if (size() + n < capacity())
+				__insert_impl(position, n, val);
+			else
+				__realloc_insert_impl(position, n, val);
+		}
+
         iterator insert(iterator position, const value_type& val) {
 
 			size_type i = ft::distance(begin(), position);
@@ -252,15 +273,9 @@ class vector {
 			return begin() + i;
         }
 
-		void insert(iterator position, size_type n, const value_type& val) {
-			if (n == 0)
-				return ;
-			else if (size() + n < capacity())
-				 __insert_impl(position, n, val);
-			else
-				__realloc_insert_impl(position, n, val);
-		}
 
+
+		// move to private
 		void __insert_impl(iterator position, size_type n, const value_type& val)
 		{
 			iterator shiftedEnd = end() + n;
@@ -279,6 +294,7 @@ class vector {
 			}
 		}
 
+		//move to private
 		void __realloc_insert_impl(iterator position, size_type n, const value_type& val)
 		{
 			size_type newCapacity = __next_capacity__(size());
@@ -312,13 +328,17 @@ class vector {
             _storage_end = start + newCapacity;
 		}
 
-
-		template <class InputIterator>
-        void insert(iterator position, 
-			typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type first, 
-			typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type last) 
+		template <typename InputIterator>
+        void insert(iterator position, InputIterator first, InputIterator last) 
 		{
+			typedef typename is_integral<InputIterator>::type check_integral;
 			
+			__insert(position, first, last, check_integral());
+		}
+
+		// move to the private part
+		template <typename InputIterator>
+		void __insert(iterator position, InputIterator first, InputIterator last, integral_false_type) {
 			size_type n = ft::distance(first, last);
 
 			if (n == 0)
@@ -329,15 +349,12 @@ class vector {
 				__realloc_insert_impl(position, n, first, last);
 		}
 
-		template <class InputIterator>
-		void __insert_impl(
-			iterator position, 
-			typename enable_if<are_same<typename is_integral<size_type>::type, integral_true_type>::value, size_type>::type n,
-	    	typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type first, 
-			typename enable_if<are_same<typename is_integral<InputIterator>::type, integral_false_type>::value, InputIterator>::type last)
+		//move to private
+		template <typename InputIterator>
+		void __insert_impl(iterator position, size_type n, InputIterator first, InputIterator last)
 		{	
-			iterator newEnd = end() + n - 1;
-			iterator lastInserted = position + n;
+			iterator newEnd = end() + n;
+			iterator lastInserted = position + n - 1;
 
 			for (; first != last; first++)
 			{
@@ -347,16 +364,15 @@ class vector {
 
 				lastInserted--;
 				newEnd--;
+				_finish++;
 			}
-			_finish += n;
+			//_finish += n;
 		}
 
-		template <class InputIterator>
-		void __realloc_insert_impl(
-			iterator position, 
-			size_type n,
-	    	typename enable_if<are_same<typename is_integral<InputIterator>::value, false_type>::value, InputIterator>::type first, 
-			typename enable_if<are_same<typename is_integral<InputIterator>::value, false_type>::value, InputIterator>::type last)
+
+		// move to private
+		template <typename InputIterator>
+		void __realloc_insert_impl(iterator position, size_type n, InputIterator first, InputIterator last)
 		{
 			size_type newCapacity = __next_capacity__(size());
 			pointer start = _allocator.allocate(newCapacity);
@@ -376,10 +392,11 @@ class vector {
 				_allocator.destroy(it.base());
 			}
 
-			_allocator.deallocate(_start, capacity());
+			if (_start != 0)
+				_allocator.deallocate(_start, capacity());
 
 			_start = start;
-            _finish = start + size() + n + 1;
+            _finish = finish;
             _storage_end = start + newCapacity;
 		}
 
@@ -389,8 +406,7 @@ class vector {
         
         iterator erase(iterator first, iterator last) {
 
-			size_type n = (size_type)ft::distance(first, last);
-			//std::cout << "n: " << last - first << std::endl; 
+			size_type n = static_cast<size_type>(ft::distance(first, last));
 			
 			while (first != last) {
 				_allocator.destroy(first.base());
@@ -429,6 +445,7 @@ class vector {
 
         void clear() {
             for (pointer ptr = _start; ptr != _finish; ptr++) {
+				//std::cout << "Clearing...";
                 _allocator.destroy(ptr);
             }
             _finish = _start;

@@ -1,17 +1,18 @@
 #pragma once
 
 #include "type_traits.hpp"
+#include "iterator_traits.hpp"
 #include <uchar.h>
 
 namespace ft {
-
-	template<typename T, T __v>
+	
+	template<typename T, T v>
 	struct integral_constant
 	{
-		static const T	                    value = __v;
+		static const T	                    value = v;
 		typedef T                           value_type;
-		typedef integral_constant<T, __v>   type;
-		//const operator value_type() const { return value; }
+		typedef integral_constant<T, v>   	type;
+		operator value_type() const { return value; }
 	};
 
 	typedef integral_constant<bool, true>     integral_true_type;
@@ -35,14 +36,6 @@ namespace ft {
 
 	template<>
 	struct __is_integral__<unsigned char>
-	: public integral_true_type { };
-
-	template<>
-	struct __is_integral__<char16_t>
-	: public integral_true_type { };
-
-	template<>
-	struct __is_integral__<char32_t>
 	: public integral_true_type { };
 
 	template<>
