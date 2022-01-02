@@ -3,6 +3,10 @@
 #include <vector>
 #include <list>
 
+struct It {
+
+};
+
 int main()
 {
 	{
@@ -14,7 +18,6 @@ int main()
 		b.push_back(95);
 		b.push_back(105);
 		b.push_back(115);
-
 
 		//b.erase(b.begin(), b.end());
 		auto beg = b.begin();

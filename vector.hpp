@@ -123,7 +123,7 @@ class vector {
             return size_type(_storage_end - _start);
         }
 
-         bool empty() const {
+        bool empty() const {
             return begin() == end();
         }
 
@@ -214,28 +214,11 @@ class vector {
         // Modifiers
         template <class InputIterator>
         void assign(InputIterator first, InputIterator last) {
-
 			typedef typename is_integral<InputIterator>::type check_integral;
 
-			_assign(first, last, check_integral());
+			__assign(first, last, check_integral());
         }
 
-
-		//move to private
-		template <typename InputIterator>
-		void _assign(InputIterator first, InputIterator last, integral_false_type) {
-			size_type n = ft::distance(first, last);
-
-			if (n >= capacity()) {
-				vector tmp(first, last, get_allocator());
-                swap(tmp);
-            }
-            else {
-				clear();
-				insert(begin(), first, last);
-            }
-		}
-        
         void assign(size_type n, const value_type& val) {
             if (n >= capacity()) {
                 vector tmp(n, val, get_allocator());
@@ -273,131 +256,11 @@ class vector {
 			return begin() + i;
         }
 
-
-
-		// move to private
-		void __insert_impl(iterator position, size_type n, const value_type& val)
-		{
-			iterator shiftedEnd = end() + n;
-			iterator lastInserted = position + n - 1;
-
-			for (; n != 0; n--)
-			{
-				//std::cout << "here:" << n << " " << val << std::endl;
-            	_allocator.construct(shiftedEnd.base(), *lastInserted);
-            	_allocator.destroy(lastInserted.base());
-				_allocator.construct(lastInserted.base(), val);
-
-				lastInserted--;
-				shiftedEnd--;
-				_finish++;
-			}
-		}
-
-		//move to private
-		void __realloc_insert_impl(iterator position, size_type n, const value_type& val)
-		{
-			size_type newCapacity = __next_capacity__(size());
-			//std::cout << newCapacity << std::endl;
-			pointer start = _allocator.allocate(newCapacity);
-			pointer finish = start;
-
-			iterator it = begin();
-			for (; it != position; it++, finish++) {
-				//std::cout << 1 << std::endl;
-				_allocator.construct(finish, *it);
-				_allocator.destroy(it.base());
-			}
-		
-			for (; n != 0; n--, finish++) {
-				//std::cout << 2 << std::endl;
-				_allocator.construct(finish, val);
-			}
-
-			for (; it != end(); it++, finish++) {
-				//std::cout << 3 << std::endl;
-				_allocator.construct(finish, *it);
-				_allocator.destroy(it.base());
-			}
-
-			if (_start != 0)
-				_allocator.deallocate(_start, capacity());
-
-			_start = start;
-            _finish = finish;
-            _storage_end = start + newCapacity;
-		}
-
 		template <typename InputIterator>
-        void insert(iterator position, InputIterator first, InputIterator last) 
-		{
+        void insert(iterator position, InputIterator first, InputIterator last) {
 			typedef typename is_integral<InputIterator>::type check_integral;
 			
 			__insert(position, first, last, check_integral());
-		}
-
-		// move to the private part
-		template <typename InputIterator>
-		void __insert(iterator position, InputIterator first, InputIterator last, integral_false_type) {
-			size_type n = ft::distance(first, last);
-
-			if (n == 0)
-				return ;
-			else if (size() + n < capacity())
-				__insert_impl(position, n, first, last);
-			else
-				__realloc_insert_impl(position, n, first, last);
-		}
-
-		//move to private
-		template <typename InputIterator>
-		void __insert_impl(iterator position, size_type n, InputIterator first, InputIterator last)
-		{	
-			iterator newEnd = end() + n;
-			iterator lastInserted = position + n - 1;
-
-			for (; first != last; first++)
-			{
-            	_allocator.construct(newEnd.base(), *lastInserted);
-            	_allocator.destroy(lastInserted.base());
-				_allocator.construct(lastInserted.base(), *first);
-
-				lastInserted--;
-				newEnd--;
-				_finish++;
-			}
-			//_finish += n;
-		}
-
-
-		// move to private
-		template <typename InputIterator>
-		void __realloc_insert_impl(iterator position, size_type n, InputIterator first, InputIterator last)
-		{
-			size_type newCapacity = __next_capacity__(size());
-			pointer start = _allocator.allocate(newCapacity);
-			pointer finish = start;
-
-			iterator it = begin();
-			for (; it != position; it++, finish++) {
-				_allocator.construct(finish, *it);
-				_allocator.destroy(it.base());
-			}
-		
-			for (; first != last; first++, finish++)
-				_allocator.construct(finish, *first);
-
-			for (; it != end(); it++, finish++) {
-				_allocator.construct(finish, *it);
-				_allocator.destroy(it.base());
-			}
-
-			if (_start != 0)
-				_allocator.deallocate(_start, capacity());
-
-			_start = start;
-            _finish = finish;
-            _storage_end = start + newCapacity;
 		}
 
         iterator erase(iterator position) {
@@ -445,7 +308,6 @@ class vector {
 
         void clear() {
             for (pointer ptr = _start; ptr != _finish; ptr++) {
-				//std::cout << "Clearing...";
                 _allocator.destroy(ptr);
             }
             _finish = _start;
@@ -458,14 +320,136 @@ class vector {
         }
 
 
-		// Helpers:
-		private:
+	private:
+
+		//Helpers
 		inline u_int64_t
-		__next_capacity__(u_int64_t capacity)
+		__next_capacity(u_int64_t capacity)
 		{
 		    return static_cast<u_int64_t>(1U << static_cast<u_int64_t>(log2(capacity) + 1));
 		}
+
+		template <typename InputIterator>
+		void __assign(InputIterator first, InputIterator last, integral_false_type) {
+			size_type n = ft::distance(first, last);
+
+			if (n >= capacity()) {
+				vector tmp(first, last, get_allocator());
+                swap(tmp);
+            }
+            else {
+				clear();
+				insert(begin(), first, last);
+            }
+		}
+
+		template <typename InputIterator>
+		void __insert(iterator position, InputIterator first, InputIterator last, integral_false_type) {
+			size_type n = ft::distance(first, last);
+
+			if (n == 0)
+				return ;
+			else if (size() + n < capacity())
+				__insert_impl(position, n, first, last);
+			else
+				__realloc_insert_impl(position, n, first, last);
+		}
+
+		template <typename InputIterator>
+		void __insert_impl(iterator position, size_type n, InputIterator first, InputIterator last)
+		{	
+			iterator newEnd = end() + n;
+			iterator lastInserted = position + n - 1;
+
+			for (; first != last; first++)
+			{
+            	_allocator.construct(newEnd.base(), *lastInserted);
+            	_allocator.destroy(lastInserted.base());
+				_allocator.construct(lastInserted.base(), *first);
+
+				lastInserted--;
+				newEnd--;
+				_finish++;
+			}
+		}
+
+		template <typename InputIterator>
+		void __realloc_insert_impl(iterator position, size_type n, InputIterator first, InputIterator last)
+		{
+			size_type newCapacity = __next_capacity(size());
+			pointer start = _allocator.allocate(newCapacity);
+			pointer finish = start;
+
+			iterator it = begin();
+			for (; it != position; it++, finish++) {
+				_allocator.construct(finish, *it);
+				_allocator.destroy(it.base());
+			}
+		
+			for (; first != last; first++, finish++)
+				_allocator.construct(finish, *first);
+
+			for (; it != end(); it++, finish++) {
+				_allocator.construct(finish, *it);
+				_allocator.destroy(it.base());
+			}
+
+			if (_start != 0)
+				_allocator.deallocate(_start, capacity());
+
+			_start = start;
+            _finish = finish;
+            _storage_end = start + newCapacity;
+		}
+
+		void __insert_impl(iterator position, size_type n, const value_type& val)
+		{
+			iterator shiftedEnd = end() + n;
+			iterator lastInserted = position + n - 1;
+
+			for (; n != 0; n--)
+			{
+            	_allocator.construct(shiftedEnd.base(), *lastInserted);
+            	_allocator.destroy(lastInserted.base());
+				_allocator.construct(lastInserted.base(), val);
+
+				lastInserted--;
+				shiftedEnd--;
+				_finish++;
+			}
+		}
+
+		void __realloc_insert_impl(iterator position, size_type n, const value_type& val)
+		{
+			size_type newCapacity = __next_capacity(size());
+			pointer start = _allocator.allocate(newCapacity);
+			pointer finish = start;
+
+			iterator it = begin();
+			for (; it != position; it++, finish++) {
+				_allocator.construct(finish, *it);
+				_allocator.destroy(it.base());
+			}
+		
+			for (; n != 0; n--, finish++) {
+				_allocator.construct(finish, val);
+			}
+
+			for (; it != end(); it++, finish++) {
+				_allocator.construct(finish, *it);
+				_allocator.destroy(it.base());
+			}
+
+			if (_start != 0)
+				_allocator.deallocate(_start, capacity());
+
+			_start = start;
+            _finish = finish;
+            _storage_end = start + newCapacity;
+		}
+        
     };
+
 
     // Non-member function overloads
     template <typename T, typename Alloc>
