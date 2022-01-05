@@ -36,3 +36,5 @@ tests/*
 test.cpp
 vector3.hpp
 a.out
+
+.vscode/
