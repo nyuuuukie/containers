@@ -16,7 +16,7 @@ namespace ft {
 	template<typename arg, typename result>
     struct unary_function
     {
-		typedef arg		argument_type;   
+		typedef arg		argument_type;
 		typedef result	result_type;  
     };
 
@@ -40,10 +40,10 @@ namespace ft {
     struct select1st : public unary_function<Pair, typename Pair::first_type>
     {
 		typename Pair::first_type& 
-		operator()(Pair& __x) const { return __x.first; }
+		operator()(Pair& x) const { return x.first; }
 
 		const typename Pair::first_type&
-		operator()(const Pair& __x) const { return __x.first; }
+		operator()(const Pair& x) const { return x.first; }
 	};
 
 

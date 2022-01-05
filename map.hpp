@@ -3,12 +3,9 @@
 #include <memory>
 
 #include "pair.hpp"
-#include "normal_iterator.hpp"
 #include "reverse_iterator.hpp"
 
 #include "tree.hpp"
-
-#include "utils.hpp"
 
 namespace ft {
 
@@ -31,8 +28,8 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-        typedef ft::rb_tree_iterator<value_type>        iterator;
-        typedef ft::rb_tree_iterator<const value_type>  const_iterator;
+        typedef rb_tree_iterator<value_type>        	iterator;
+        typedef rb_tree_iterator<const value_type>  	const_iterator;
         typedef ft::reverse_iterator<iterator>          reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
@@ -53,8 +50,7 @@ namespace ft {
 		};
 
 	private:
-		// Fix 3rd param of tree
-        rb_tree<key_type, mapped_type, select1st<value_type>, key_compare, allocator_type> _tree;
+        rb_tree<key_type, value_type, select1st<value_type>, key_compare, allocator_type> _tree;
 
     public:
 		map() {}
