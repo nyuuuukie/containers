@@ -28,14 +28,15 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-		// Not a random access iterator!
-        typedef ft::normal_iterator<value_type, set>       iterator;
-        typedef ft::normal_iterator<const value_type, set> const_iterator;
-        typedef ft::reverse_iterator<iterator>             reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>       const_reverse_iterator;
+		typedef rb_tree<value_type, key_compare, allocator_type> tree_type;
+
+		typedef typename tree_type::iterator       		    iterator;
+        typedef typename tree_type::const_iterator 		    const_iterator;
+        typedef typename tree_type::reverse_iterator        reverse_iterator;
+        typedef typename tree_type::const_reverse_iterator  const_reverse_iterator;
 
 	private:
-        rb_tree<value_type, key_compare, allocator_type> _tree;
+        tree_type _tree;
 
     public:
 		set() {}

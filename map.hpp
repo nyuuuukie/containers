@@ -28,10 +28,12 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-        typedef rbt_iterator<value_type>        		iterator;
-        typedef rbt_iterator<const value_type>  		const_iterator;
-        typedef ft::reverse_iterator<iterator>          reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+		typedef rb_tree<value_type, key_compare, allocator_type> tree_type;
+
+        typedef typename tree_type::iterator       		    iterator;
+        typedef typename tree_type::const_iterator 		    const_iterator;
+        typedef typename tree_type::reverse_iterator        reverse_iterator;
+        typedef typename tree_type::const_reverse_iterator  const_reverse_iterator;
 
 		// Member classes
 		class value_compare : ft::binary_function<value_type, value_type, bool> {
@@ -50,7 +52,7 @@ namespace ft {
 		};
 
 	private:
-        rb_tree<value_type, key_compare, allocator_type> _tree;
+        tree_type _tree;
 
     public:
 		map() {}
