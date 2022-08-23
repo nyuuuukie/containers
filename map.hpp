@@ -5,7 +5,7 @@
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
 
-#include "tree.hpp"
+#include "rb_tree.hpp"
 
 namespace ft {
 
@@ -28,8 +28,8 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-        typedef rb_tree_iterator<value_type>        	iterator;
-        typedef rb_tree_iterator<const value_type>  	const_iterator;
+        typedef rbt_iterator<value_type>        		iterator;
+        typedef rbt_iterator<const value_type>  		const_iterator;
         typedef ft::reverse_iterator<iterator>          reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
@@ -50,7 +50,7 @@ namespace ft {
 		};
 
 	private:
-        rb_tree<key_type, value_type, select1st<value_type>, key_compare, allocator_type> _tree;
+        rb_tree<value_type, key_compare, allocator_type> _tree;
 
     public:
 		map() {}
@@ -202,7 +202,7 @@ namespace ft {
 			return _tree.key_comp();
 		}
 
-		map::value_compare value_comp() const {
+		value_compare value_comp() const {
 			return value_compare(key_comp());
 		}
         

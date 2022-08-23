@@ -90,7 +90,7 @@ class vector {
         }
         
         reverse_iterator rbegin() {
-            return reverse_iterator(end());
+            return reverse_iterator(--end());
         }
         
         const_iterator end() const {

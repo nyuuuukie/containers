@@ -13,7 +13,7 @@ namespace ft {
         typename iterator_traits<_Iterator>::difference_type,
         typename iterator_traits<_Iterator>::pointer,
         typename iterator_traits<_Iterator>::reference> 
-	{        
+	{
         typedef iterator_traits<_Iterator>    __traits_type;
 
         protected:
@@ -44,12 +44,12 @@ namespace ft {
             }
 
             reference operator*() const {
-                _Iterator tmp = _current - 1;
+                _Iterator tmp = _current;
                 return *tmp;
             }
 
             pointer operator->() const {
-                _Iterator tmp = _current - 1;
+                _Iterator tmp = _current;
                 return &(*tmp);
             }
 

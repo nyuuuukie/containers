@@ -6,9 +6,7 @@
 #include "normal_iterator.hpp"
 #include "reverse_iterator.hpp"
 
-#include "tree.hpp"
-
-#include "utils.hpp"
+#include "rb_tree.hpp"
 
 namespace ft {
 
@@ -30,13 +28,14 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-        typedef ft::normal_iterator<value_type>         iterator;
-        typedef ft::normal_iterator<const value_type>   const_iterator;
-        typedef ft::reverse_iterator<iterator>          reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+		// Not a random access iterator!
+        typedef ft::normal_iterator<value_type, set>       iterator;
+        typedef ft::normal_iterator<const value_type, set> const_iterator;
+        typedef ft::reverse_iterator<iterator>             reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>       const_reverse_iterator;
 
 	private:
-        rb_tree<key_type, value_type, identity<value_type>, key_compare, allocator_type> _tree;
+        rb_tree<value_type, key_compare, allocator_type> _tree;
 
     public:
 		set() {}
@@ -158,7 +157,7 @@ namespace ft {
 			return _tree.key_comp();
 		}
 
-		set::value_compare value_comp() const {
+		value_compare value_comp() const {
 			return value_compare(key_comp());
 		}
         
