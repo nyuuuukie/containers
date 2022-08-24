@@ -86,10 +86,8 @@ public:
 template <typename T>
 struct rbt_const_iterator {
 
-private:
-	typedef rbt_iterator<T>		non_const_iterator;
-
 public:
+	typedef rbt_iterator<T>		non_const_iterator;
 	typedef rbt_node<T>	 node_type;
 	typedef rbt_node<T> * node_pointer;
 	

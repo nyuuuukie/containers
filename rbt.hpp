@@ -53,7 +53,7 @@ public:
 	rbt(void);
 	~rbt(void);
 
-	void insert(const_reference data);
+	iterator insert(const_reference data);
 	void remove(const_reference data);
 	node_type *search(const_reference data);
 
@@ -249,14 +249,14 @@ void rbt<T, Compare, Alloc>::rotate_right(node_type *node) {
 };
 
 template <typename T, typename Compare, typename Alloc >
-void 
+typename rbt<T, Compare, Alloc>::iterator 
 rbt<T, Compare, Alloc>::insert(const_reference data) {
 
 	node_type *node = create_node(data);
 
 	insert(node);
-	// change return type to iterator
-	// return iterator(node);
+
+	return iterator(node);
 };
 
 template <typename T, typename Compare, typename Alloc >

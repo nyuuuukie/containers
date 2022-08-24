@@ -24,10 +24,14 @@ private:
 public:
 	map_iterator(void) : _current() { }
 
-	explicit
 	map_iterator(const TreeIterator &node) : _current(node) { }
 
-	map_iterator(const map_iterator<TreeIterator> &it) : _current(it.base()) {}
+	map_iterator(const map_iterator<TreeIterator> &it) : _current(it._current) {}
+
+	TreeIterator 
+	base(void) const {
+		return _current;
+	}
 
 	reference 
 	operator*(void) const {
@@ -73,14 +77,14 @@ public:
 
 	inline bool
 	operator!=(const map_iterator<TreeIterator> &rhs) const
-	{ return _current == rhs._current; }
+	{ return _current != rhs._current; }
 };
 
 template <typename TreeIterator>
 struct map_const_iterator {
 
 private:
-	typedef map_iterator<TreeIterator>				non_const_iterator;
+	// typedef map_iterator<TreeIterator>				non_const_iterator;
 
 public:
 	typedef typename TreeIterator::pointer         	pointer;
@@ -98,18 +102,23 @@ public:
 	explicit
 	map_const_iterator(const TreeIterator &node) : _current(node) { }
 
-	map_const_iterator(const non_const_iterator &it) : _current(it.base()) { }
+	map_const_iterator(map_iterator<typename TreeIterator::non_const_iterator> it) : _current(it.base()) { }
 
-	map_const_iterator(const map_const_iterator &it) : _current(it.base()) {}
+	map_const_iterator(const map_const_iterator &it) : _current(it._current) {}
+
+	TreeIterator 
+	base(void) const {
+		return _current;
+	}
 
 	reference 
 	operator*(void) const {
-		return *_current;
+		return _current.operator*();
 	}
 
 	pointer
 	operator->(void) const {
-		return &(_current->data);
+		return _current.operator->();
 	}
 
 	map_const_iterator
