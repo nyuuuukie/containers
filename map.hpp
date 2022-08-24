@@ -4,10 +4,43 @@
 
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
-
-#include "rb_tree.hpp"
+#include "map_iterator.hpp"
+#include "rbt.hpp"
 
 namespace ft {
+
+	template <class Key, class Pair, class Compare>
+	class map_value_compare {
+		
+	private:
+		Compare comp;
+
+	public:
+		
+		map_value_compare() : comp() { }
+		map_value_compare(Compare c) : comp(c) { }
+		
+		const Compare&
+		key_comp() const { 
+			return comp;
+		}
+
+		bool 
+		operator()(const Pair &x, const Pair &y) const {
+			return comp(x.first, y.first);
+		}
+		
+		bool
+		operator()(const Pair &x, const Key &y) const {
+			return comp(x.first, y);
+		}
+		
+		bool
+		operator()(const Key &x, const Pair &y) const {
+			return comp(x, y.first);
+		}
+	};
+
 
 	template < typename Key, typename T, 
 	typename Comp = ft::less<Key>, 
@@ -19,7 +52,6 @@ namespace ft {
 		typedef T 										mapped_type;
 		typedef ft::pair<const Key, T>					value_type;
         typedef size_t                                  size_type;
-        typedef typename iterator::difference_type     	difference_type;
 		typedef Comp									key_compare;
         typedef Alloc                               	allocator_type;
 
@@ -28,28 +60,30 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-		typedef rb_tree<value_type, key_compare, allocator_type> tree_type;
-
-        typedef typename tree_type::iterator       		    iterator;
-        typedef typename tree_type::const_iterator 		    const_iterator;
-        typedef typename tree_type::reverse_iterator        reverse_iterator;
-        typedef typename tree_type::const_reverse_iterator  const_reverse_iterator;
-
 		// Member classes
 		class value_compare : ft::binary_function<value_type, value_type, bool> {
 			
 			// Member functions
 			public:
-				bool operator()( const value_type& lhs, const value_type& rhs ) const {
-					return _c(lhs.first, rhs.first);
+				bool operator()( const value_type &lhs, const value_type &rhs ) const {
+					return _comp(lhs.first, rhs.first);
 				}
 
 			// Protected member objects
 			protected:
-				Comp _c;
+				key_compare _comp;
 
-				value_compare( Comp c ) : _c(c) {}			
+				value_compare( key_compare comp ) : _comp(comp) {}			
 		};
+
+		typedef rbt<value_type, map_value_compare<key_type, value_type, key_compare>, allocator_type> tree_type;
+
+		typedef map_iterator<typename tree_type::iterator>			    iterator;
+		typedef map_const_iterator<typename tree_type::const_iterator>	const_iterator;
+		typedef reverse_iterator<const_iterator>						const_reverse_iterator;
+		typedef reverse_iterator<iterator>								reverse_iterator;
+
+        typedef typename iterator::difference_type     	difference_type;
 
 	private:
         tree_type _tree;

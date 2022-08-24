@@ -6,7 +6,7 @@
 #include "normal_iterator.hpp"
 #include "reverse_iterator.hpp"
 
-#include "rb_tree.hpp"
+#include "rbt.hpp"
 
 namespace ft {
 
@@ -28,7 +28,7 @@ namespace ft {
         typedef typename Alloc::reference      			reference;
         typedef typename Alloc::const_reference			const_reference;
 
-		typedef rb_tree<value_type, key_compare, allocator_type> tree_type;
+		typedef rbt<value_type, key_compare, allocator_type> tree_type;
 
 		typedef typename tree_type::iterator       		    iterator;
         typedef typename tree_type::const_iterator 		    const_iterator;

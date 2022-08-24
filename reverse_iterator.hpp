@@ -30,14 +30,14 @@ namespace ft {
             reverse_iterator() : _current() { }
 
             explicit 
-            reverse_iterator(iterator_type x) : _current(x) { }
+            reverse_iterator(iterator_type it) : _current(it) { }
 
-            reverse_iterator(const reverse_iterator& x)
-            : _current(x._current) { }
+            reverse_iterator(const reverse_iterator &it)
+            : _current(it._current) { }
 
             template<class _Iter>
-            reverse_iterator(const reverse_iterator<_Iter>& x)
-            : _current(x.base()) { }
+            reverse_iterator(const reverse_iterator<_Iter> &it)
+            : _current(it.base()) { }
 
             iterator_type base() const { 
                 return _current;

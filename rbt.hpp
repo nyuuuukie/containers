@@ -3,21 +3,22 @@
 #include <sstream>  
 #include <iomanip>
 #include <memory>
+#include <iostream>
 
 #include "reverse_iterator.hpp"
 #include "rbt_iterator.hpp"
-#include "rb_node.hpp"
+#include "rbt_node.hpp"
 
 namespace ft {
 
 template <typename T>
-void print(rb_node<T> *node);
+void print(rbt_node<T> *node);
 
 template <typename T>
-void print_detailed(rb_node<T> *node);
+void print_detailed(rbt_node<T> *node);
 
-template <typename T, typename Compare = std::less<T>, typename Alloc = std::allocator<rb_node<T> > >
-class rb_tree {
+template < typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T> >
+class rbt {
 
 public:
 	typedef Compare					value_compare;
@@ -26,30 +27,31 @@ public:
 	typedef ptrdiff_t 				difference_type;
 	typedef Alloc 					allocator_type;
 
+
 	typedef value_type* 			pointer;
 	typedef const value_type* 		const_pointer;
 	typedef value_type& 			reference;
 	typedef const value_type& 		const_reference;
 
-	typedef rb_node<value_type>		node_type;
+	typedef rbt_node<value_type>		node_type;
 	typedef node_type *				node_pointer;
 
-	typedef rbt_iterator<node_pointer>	     iterator;
-	typedef rbt_const_iterator<node_pointer> const_iterator;
-	typedef reverse_iterator<const_iterator> const_reverse_iterator;
-	typedef reverse_iterator<iterator>		 reverse_iterator;
- 
+	typedef rbt_iterator<value_type>	   		iterator;
+	typedef rbt_const_iterator<value_type>		const_iterator;
+	typedef reverse_iterator<const_iterator> 	const_reverse_iterator;
+	typedef reverse_iterator<iterator>		 	reverse_iterator;
 
+	typedef typename Alloc::template rebind< rbt_node<value_type> >::other	node_allocator_type;
 private:
-	allocator_type	_alloc;
-	value_compare	_cmp;
-	node_type *		_root;
-	node_type *		_leaf;
-	size_type		_size;
+	node_allocator_type	_alloc;
+	value_compare		_cmp;
+	node_type *			_root;
+	node_type *			_leaf;
+	size_type			_size;
 
 public:
-	rb_tree(void);
-	~rb_tree(void);
+	rbt(void);
+	~rbt(void);
 
 	void insert(const_reference data);
 	void remove(const_reference data);
@@ -104,7 +106,7 @@ private:
 // Public interface
 
 template <typename T, typename Compare, typename Alloc >
-rb_tree<T, Compare, Alloc>::rb_tree(void) 
+rbt<T, Compare, Alloc>::rbt(void) 
 : _root(NULL), _size(0) {
 	_leaf = _alloc.allocate(1);
 	_leaf->color = black;
@@ -114,63 +116,63 @@ rb_tree<T, Compare, Alloc>::rb_tree(void)
 }
 
 template <typename T, typename Compare, typename Alloc >
-rb_tree<T, Compare, Alloc>::~rb_tree(void) {
+rbt<T, Compare, Alloc>::~rbt(void) {
 	destroy_tree(_root);
 	destroy_node(_leaf);
 }
 
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::iterator 
-rb_tree<T, Compare, Alloc>::end(void) {
+typename rbt<T, Compare, Alloc>::iterator 
+rbt<T, Compare, Alloc>::end(void) {
 	return iterator(_leaf);
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::const_iterator 
-rb_tree<T, Compare, Alloc>::end(void) const {
+typename rbt<T, Compare, Alloc>::const_iterator 
+rbt<T, Compare, Alloc>::end(void) const {
 	return const_iterator(_leaf);
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::iterator 
-rb_tree<T, Compare, Alloc>::begin(void) {
+typename rbt<T, Compare, Alloc>::iterator 
+rbt<T, Compare, Alloc>::begin(void) {
 	return (_root ? iterator(leftmost_node(_root)) : end());
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::const_iterator 
-rb_tree<T, Compare, Alloc>::begin(void) const {
+typename rbt<T, Compare, Alloc>::const_iterator 
+rbt<T, Compare, Alloc>::begin(void) const {
 	return (_root ? const_iterator(leftmost_node(_root)) : end());
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::reverse_iterator 
-rb_tree<T, Compare, Alloc>::rend(void) {
+typename rbt<T, Compare, Alloc>::reverse_iterator 
+rbt<T, Compare, Alloc>::rend(void) {
 	return reverse_iterator(end());
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::const_reverse_iterator 
-rb_tree<T, Compare, Alloc>::rend(void) const {
+typename rbt<T, Compare, Alloc>::const_reverse_iterator 
+rbt<T, Compare, Alloc>::rend(void) const {
 	return const_reverse_iterator(end());
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::reverse_iterator 
-rb_tree<T, Compare, Alloc>::rbegin(void) {
+typename rbt<T, Compare, Alloc>::reverse_iterator 
+rbt<T, Compare, Alloc>::rbegin(void) {
 	return reverse_iterator(--end());
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::const_reverse_iterator 
-rb_tree<T, Compare, Alloc>::rbegin(void) const {
+typename rbt<T, Compare, Alloc>::const_reverse_iterator 
+rbt<T, Compare, Alloc>::rbegin(void) const {
 	return const_reverse_iterator(--end());
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::node_type * 
-rb_tree<T, Compare, Alloc>::create_node(const_reference data) {
+typename rbt<T, Compare, Alloc>::node_type * 
+rbt<T, Compare, Alloc>::create_node(const_reference data) {
 
 	node_type *node = _alloc.allocate(1);
 	_alloc.construct(node, data);
@@ -182,19 +184,19 @@ rb_tree<T, Compare, Alloc>::create_node(const_reference data) {
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::node_type * 
-rb_tree<T, Compare, Alloc>::get_root(void) const {
+typename rbt<T, Compare, Alloc>::node_type * 
+rbt<T, Compare, Alloc>::get_root(void) const {
 	return _root;
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::size_type 
-rb_tree<T, Compare, Alloc>::size(void) const {
+typename rbt<T, Compare, Alloc>::size_type 
+rbt<T, Compare, Alloc>::size(void) const {
 	return _size;
 }
 
 template <typename T, typename Compare, typename Alloc >
-void rb_tree<T, Compare, Alloc>::rotate_left(node_type *node) {
+void rbt<T, Compare, Alloc>::rotate_left(node_type *node) {
 
 	node_type *rchild = node->right;
 	node->right = rchild->left;
@@ -220,7 +222,7 @@ void rb_tree<T, Compare, Alloc>::rotate_left(node_type *node) {
 };
 
 template <typename T, typename Compare, typename Alloc >
-void rb_tree<T, Compare, Alloc>::rotate_right(node_type *node) {
+void rbt<T, Compare, Alloc>::rotate_right(node_type *node) {
 
 	node_type *lchild = node->left;
 	node->left = lchild->right;
@@ -248,7 +250,7 @@ void rb_tree<T, Compare, Alloc>::rotate_right(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::insert(const_reference data) {
+rbt<T, Compare, Alloc>::insert(const_reference data) {
 
 	node_type *node = create_node(data);
 
@@ -259,7 +261,7 @@ rb_tree<T, Compare, Alloc>::insert(const_reference data) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::insert(node_type *node) {
+rbt<T, Compare, Alloc>::insert(node_type *node) {
 	
     for (node_type *tmp = _root; tmp && tmp != _leaf; ) {
 		node->parent = tmp;
@@ -281,7 +283,7 @@ rb_tree<T, Compare, Alloc>::insert(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::insert_balance_fix(node_type *node) {
+rbt<T, Compare, Alloc>::insert_balance_fix(node_type *node) {
 
 	while (node != _root) {
 
@@ -325,7 +327,7 @@ rb_tree<T, Compare, Alloc>::insert_balance_fix(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::destroy_tree(node_type *node) {
+rbt<T, Compare, Alloc>::destroy_tree(node_type *node) {
 
 	if (node && node != _leaf) {
 		destroy_tree(node->left);
@@ -336,7 +338,7 @@ rb_tree<T, Compare, Alloc>::destroy_tree(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::destroy_node(node_type *node) {
+rbt<T, Compare, Alloc>::destroy_node(node_type *node) {
 	
 	if (node == _leaf) {
 		return ;
@@ -351,7 +353,7 @@ rb_tree<T, Compare, Alloc>::destroy_node(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::remove(const_reference data) {
+rbt<T, Compare, Alloc>::remove(const_reference data) {
 
 	node_type *node = search(data);
 	if (node != _leaf) {
@@ -361,7 +363,7 @@ rb_tree<T, Compare, Alloc>::remove(const_reference data) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
+rbt<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
 
 		node_type *tmpparent = first->parent;
 		node_type *tmpleft = first->left;
@@ -411,7 +413,7 @@ rb_tree<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::remove(node_type *node) {
+rbt<T, Compare, Alloc>::remove(node_type *node) {
 
 	if (node->left != _leaf && node->right != _leaf) {
 		// 2 childs
@@ -447,7 +449,7 @@ rb_tree<T, Compare, Alloc>::remove(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::remove_balance_fix(node_type *node, node_type *parent) {
+rbt<T, Compare, Alloc>::remove_balance_fix(node_type *node, node_type *parent) {
 
 	while (is_black(node) && node != _root) {
 
@@ -502,14 +504,14 @@ rb_tree<T, Compare, Alloc>::remove_balance_fix(node_type *node, node_type *paren
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::node_type *
-rb_tree<T, Compare, Alloc>::search(const_reference data) {
+typename rbt<T, Compare, Alloc>::node_type *
+rbt<T, Compare, Alloc>::search(const_reference data) {
 	return search(_root, data);
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::node_type *
-rb_tree<T, Compare, Alloc>::search(node_type *node, const_reference data) const {
+typename rbt<T, Compare, Alloc>::node_type *
+rbt<T, Compare, Alloc>::search(node_type *node, const_reference data) const {
     
 	if (node == _leaf) {
 		return _leaf;
@@ -525,14 +527,14 @@ rb_tree<T, Compare, Alloc>::search(node_type *node, const_reference data) const 
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::size_type
-rb_tree<T, Compare, Alloc>::height(void) const {
+typename rbt<T, Compare, Alloc>::size_type
+rbt<T, Compare, Alloc>::height(void) const {
 	return height(_root);
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rb_tree<T, Compare, Alloc>::size_type
-rb_tree<T, Compare, Alloc>::height(node_type *node) const {
+typename rbt<T, Compare, Alloc>::size_type
+rbt<T, Compare, Alloc>::height(node_type *node) const {
 	if (node == _leaf) {
 		return 0;
 	}
@@ -543,7 +545,7 @@ rb_tree<T, Compare, Alloc>::height(node_type *node) const {
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::breadth_order(void (*func)(node_type *)) {
+rbt<T, Compare, Alloc>::breadth_order(void (*func)(node_type *)) {
 
     const std::size_t h = height();
     for (std::size_t i = 1; i <= h; ++i) {
@@ -553,25 +555,25 @@ rb_tree<T, Compare, Alloc>::breadth_order(void (*func)(node_type *)) {
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::in_order(void (*func)(node_type *)) {
+rbt<T, Compare, Alloc>::in_order(void (*func)(node_type *)) {
     in_order(_root, func);
 }
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::pre_order(void (*func)(node_type *)) {
+rbt<T, Compare, Alloc>::pre_order(void (*func)(node_type *)) {
     pre_order(_root, func);
 }
 
 template <typename T, typename Compare, typename Alloc >
 void
-rb_tree<T, Compare, Alloc>::post_order(void (*func)(node_type *)) {
+rbt<T, Compare, Alloc>::post_order(void (*func)(node_type *)) {
     post_order(_root, func);
 }
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rb_tree<T, Compare, Alloc>::breadth_order(node_type *node, int lvl, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::breadth_order(node_type *node, int lvl, void (*func)(node_type *)) const {
 
     if (node != _leaf) {
 		if (lvl == 1) {
@@ -585,7 +587,7 @@ rb_tree<T, Compare, Alloc>::breadth_order(node_type *node, int lvl, void (*func)
 
 template <typename T, typename Compare, typename Alloc >		 
 void
-rb_tree<T, Compare, Alloc>::pre_order(node_type *node, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::pre_order(node_type *node, void (*func)(node_type *)) const {
     if (node != _leaf) {
 		func(node);
         pre_order(node->left, func);
@@ -595,7 +597,7 @@ rb_tree<T, Compare, Alloc>::pre_order(node_type *node, void (*func)(node_type *)
 
 template <typename T, typename Compare, typename Alloc >		 
 void
-rb_tree<T, Compare, Alloc>::in_order(node_type *node, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::in_order(node_type *node, void (*func)(node_type *)) const {
 	if (node != _leaf) {
 		in_order(node->left, func);
 		func(node);
@@ -605,7 +607,7 @@ rb_tree<T, Compare, Alloc>::in_order(node_type *node, void (*func)(node_type *))
 
 template <typename T, typename Compare, typename Alloc >		
 void
-rb_tree<T, Compare, Alloc>::post_order(node_type *node, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::post_order(node_type *node, void (*func)(node_type *)) const {
 	if (node != _leaf) {
 		post_order(node->left, func);
 		post_order(node->right, func);
@@ -615,20 +617,20 @@ rb_tree<T, Compare, Alloc>::post_order(node_type *node, void (*func)(node_type *
 
 template <typename T>
 void
-print(rb_node<T> *node) {
+print(rbt_node<T> *node) {
 	std::cout << node->data << " ";
 }
 
 template <typename T>
 void
-print_detailed(rb_node<T> *node) {
+print_detailed(rbt_node<T> *node) {
 
 	if (node == NULL) {
 		return ;
  	}
 
 	struct u {
-		static std::string print_node(rb_node<T> *node) {
+		static std::string print_node(rbt_node<T> *node) {
 			std::stringstream ss;
 			ss << std::setw(10) << node->data << (node->color ? "(R)" : "(B)");
 			return ss.str();
