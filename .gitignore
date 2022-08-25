@@ -38,3 +38,5 @@ vector3.hpp
 a.out
 
 .vscode
+
+.DS_Store
