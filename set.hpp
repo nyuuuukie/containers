@@ -42,16 +42,16 @@ namespace ft {
 		set() {}
 
 		explicit
-		set( const Comp& comp, const Alloc& alloc = Alloc() );
+		set(const Comp &comp, const Alloc &alloc = Alloc());
 
 		template <class InputIt>
-		set(InputIt first, InputIt last, const Comp& comp = Comp(), const Alloc& alloc = Alloc()) {
+		set(InputIt first, InputIt last, const Comp &comp = Comp(), const Alloc &alloc = Alloc()) {
 			_tree.insert(first, last);
 		}
 
-		set( const set& other ) : _tree(other._tree) {}
+		set(const set &other) : _tree(other._tree) {}
 
-		set& operator=( const set& other ) {
+		set &operator=(const set &other) {
 			if (this != &other) {
 				_tree = other._tree;
 			}
@@ -116,46 +116,46 @@ namespace ft {
 
         
 		// Lookup 
-		size_type count( const Key& key ) const {
+		size_type count(const Key &key) const {
 			return _tree.find(key) != _tree.end();
 		}
 
-		iterator find( const Key& key ) {
+		iterator find(const Key &key) {
 			return _tree.find(key);
 		}
 
-		const_iterator find( const Key& key ) const {
+		const_iterator find(const Key &key) const {
 			return _tree.find(key);
 		}
 
-		pair<iterator, iterator> equal_range( const Key& key ) {
+		pair<iterator, iterator> equal_range(const Key &key) {
 			return _tree.equal_range(key);
 		}
 
-		pair<const_iterator, const_iterator> equal_range( const Key& key ) const {
+		pair<const_iterator, const_iterator> equal_range(const Key &key) const {
 			return _tree.equal_range(key);
 		}
 
-		iterator lower_bound( const Key& key ) {
+		iterator lower_bound(const Key &key) {
 			return _tree.lower_bound(key);
 		}
 
-		const_iterator lower_bound( const Key& key ) const {
+		const_iterator lower_bound(const Key &key) const {
 			return _tree.lower_bound(key);
 		}
 
-		iterator upper_bound( const Key& key ) {
+		iterator upper_bound(const Key &key) {
 			return _tree.upper_bound(key);
 		}
 
-		const_iterator upper_bound( const Key& key ) const {
+		const_iterator upper_bound(const Key &key) const {
 			return _tree.upper_bound(key);
 		}
 
 		
 		// Observers
 		key_compare key_comp() const {
-			return _tree.key_comp();
+			return key_compare();
 		}
 
 		value_compare value_comp() const {
@@ -164,19 +164,19 @@ namespace ft {
         
 
 		// Modifiers
-        iterator insert(iterator position, const value_type& val) {
+        iterator insert(iterator position, const value_type &val) {
 			size_type i = ft::distance(begin(), position);
 			insert(position, 1, val);
 			return begin() + i;
         }
 
-		pair<iterator, bool> insert( const value_type& value ) {
+		pair<iterator, bool> insert(const value_type &value) {
 			iterator it = _tree.insert(value);
 			return ft::make_pair(it, true);
 		}
 
 		template <class InputIt>
-		void insert( InputIt first, InputIt last ) {
+		void insert(InputIt first, InputIt last) {
 			_tree.insert(first, last);
 		}
 
@@ -188,7 +188,7 @@ namespace ft {
 			_tree.erase(first, last);
         }
 
-		size_type erase( const Key& key ) {
+		size_type erase(const Key &key) {
 			_tree.erase(key);
 		}
 
@@ -206,43 +206,44 @@ namespace ft {
     // Non-member function overloads
 	template<typename Key, typename T, typename Comp, typename Alloc>
     inline bool
-    operator==( const set<Key, Comp, Alloc>& lhs,
-	    		const set<Key, Comp, Alloc>& rhs)
+    operator==( const set<Key, Comp, Alloc> &lhs,
+	    		const set<Key, Comp, Alloc> &rhs)
     { return lhs._tree == rhs._tree; }
 
 	template<typename Key, typename T, typename Comp, typename Alloc>
     inline bool
-    operator<( const set<Key, Comp, Alloc>& lhs,
-	      	   const set<Key, Comp, Alloc>& rhs)
+    operator<( const set<Key, Comp, Alloc> &lhs,
+	      	   const set<Key, Comp, Alloc> &rhs)
     { return lhs._tree < rhs._tree; }
 
 	template<typename Key, typename T, typename Comp, typename Alloc>
     inline bool
-    operator!=( const set<Key, Comp, Alloc>& lhs,
-	       		const set<Key, Comp, Alloc>& rhs)
+    operator!=( const set<Key, Comp, Alloc> &lhs,
+	       		const set<Key, Comp, Alloc> &rhs)
     { return !(lhs == rhs); }
 
 	template<typename Key, typename T, typename Comp, typename Alloc>
     inline bool
-    operator>( const set<Key, Comp, Alloc>& lhs,
-	      	   const set<Key, Comp, Alloc>& rhs)
+    operator>( const set<Key, Comp, Alloc> &lhs,
+	      	   const set<Key, Comp, Alloc> &rhs)
     { return rhs < lhs; }
 
 	template<typename Key, typename T, typename Comp, typename Alloc>
     inline bool
-    operator<=( const set<Key, Comp, Alloc>& lhs,
-	       		const set<Key, Comp, Alloc>& rhs)
+    operator<=( const set<Key, Comp, Alloc> &lhs,
+	       		const set<Key, Comp, Alloc> &rhs)
     { return !(rhs < lhs); }
 
 	template<typename Key, typename T, typename Comp, typename Alloc>
 	inline bool
-    operator>=( const set<Key, Comp, Alloc>& lhs,
-	      		const set<Key, Comp, Alloc>& rhs)
+    operator>=( const set<Key, Comp, Alloc> &lhs,
+	      		const set<Key, Comp, Alloc> &rhs)
     { return !(lhs < rhs); }
 
 	template<typename Key, typename T, typename Comp, typename Alloc>
     inline void
-    swap( set<Key, Comp, Alloc>& lhs,
-		  set<Key, Comp, Alloc>& rhs )
-    { lhs.swap(rhs); }
+    swap( set<Key, Comp, Alloc> &lhs,
+		  set<Key, Comp, Alloc> &rhs) { 
+		lhs.swap(rhs); 
+	}
 }

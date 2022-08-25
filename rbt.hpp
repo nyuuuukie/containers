@@ -82,10 +82,16 @@ public:
 	void clear(void);
 	void swap(rbt &other);
 	
+	pair<iterator, iterator> equal_range(const_reference key);
+	pair<const_iterator, const_iterator> equal_range( const_reference key) const;
+	iterator lower_bound(const_reference key);
+	const_iterator lower_bound(const_reference key) const;
+	iterator upper_bound(const_reference key);
+	const_iterator upper_bound(const_reference key) const;
 	size_type height(void) const;
-	iterator find(const_reference data);
+	iterator find(const_reference key);
 	size_type count(const_reference key) const;
-	const_iterator find(const_reference data) const;
+	const_iterator find(const_reference key) const;
 
 	void pre_order(void (*)(iterator));
 	void in_order(void (*)(iterator));
@@ -358,6 +364,41 @@ rbt<T, Compare, Alloc>::count(const_reference data) const {
 	return count;
 }
 
+template <typename T, typename Compare, typename Alloc >
+pair<typename rbt<T, Compare, Alloc>::iterator, typename rbt<T, Compare, Alloc>::iterator> 
+rbt<T, Compare, Alloc>::equal_range(const_reference key) {
+	return ft::make_pair(lower_bound(key), upper_bound(key));
+}
+
+template <typename T, typename Compare, typename Alloc >
+pair<typename rbt<T, Compare, Alloc>::const_iterator, typename rbt<T, Compare, Alloc>::const_iterator> 
+rbt<T, Compare, Alloc>::equal_range(const_reference key) const {
+	return ft::make_pair(lower_bound(key), upper_bound(key));
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::iterator
+rbt<T, Compare, Alloc>::lower_bound(const_reference key) {
+
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::const_iterator
+rbt<T, Compare, Alloc>::lower_bound(const_reference key) const {
+
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::iterator
+rbt<T, Compare, Alloc>::upper_bound(const_reference key) {
+
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::const_iterator
+rbt<T, Compare, Alloc>::upper_bound(const_reference key) const {
+
+}
 
 // Functional Tree Traversal 
 template <typename T, typename Compare, typename Alloc >

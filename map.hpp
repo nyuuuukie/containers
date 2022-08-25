@@ -60,10 +60,13 @@ namespace ft {
 		map() {}
 
 		explicit
-		map( const Comp& comp, const Alloc& alloc = Alloc() );
+		map(const key_compare &comp, const allocator_type &alloc = allocator_type());
 
 		template <class InputIt>
-		map(InputIt first, InputIt last, const Comp& comp = Comp(), const Alloc& alloc = Alloc()) {
+		map(InputIt first, InputIt last, 
+			const key_compare &comp = key_compare(), 
+			const Alloc &alloc = allocator_type()) {
+			// Change comparator and allocator
 			_tree.insert(first, last);
 		}
 
@@ -86,7 +89,7 @@ namespace ft {
 
 
         // Element access
-		T& at( const Key& key ) {
+		T& at(const Key &key) {
 			iterator it = find(key);
 			
 			if (it == end()) {
@@ -95,7 +98,7 @@ namespace ft {
 			return it->second;
 		}
 
-		const T& at( const Key& key ) const {
+		const T& at(const Key &key) const {
 			const_iterator it = find(key);
 			
 			if (it == end()) {
@@ -104,15 +107,16 @@ namespace ft {
 			return it->second;
 		}
 
-		T& operator[]( const Key& key ) {
+		T& operator[](const Key &key) {
 			
-			pair<iterator, bool> ins;
-			if (find(key) == end()) {
-				ins = insert(make_pair(key, mapped_type()));
+			iterator it = find(key);
+			if (it != end()) {
+				return it;
 			}
+		
+			pair<iterator, bool> ins = insert(ft::make_pair(key, mapped_type()));
 			return ins->first->second;
 		}
-
 
         // Iterators
         iterator end() {
@@ -163,46 +167,46 @@ namespace ft {
 
         
 		// Lookup 
-		size_type count( const Key& key ) const {
+		size_type count(const Key &key) const {
 			return _tree.find(key) != _tree.end();
 		}
 
-		iterator find( const Key& key ) {
+		iterator find(const Key &key) {
 			return _tree.find(key);
 		}
 
-		const_iterator find( const Key& key ) const {
+		const_iterator find(const Key &key) const {
 			return _tree.find(key);
 		}
 
-		pair<iterator, iterator> equal_range( const Key& key ) {
+		pair<iterator, iterator> equal_range(const Key &key) {
 			return _tree.equal_range(key);
 		}
 
-		pair<const_iterator, const_iterator> equal_range( const Key& key ) const {
+		pair<const_iterator, const_iterator> equal_range(const Key &key) const {
 			return _tree.equal_range(key);
 		}
 
-		iterator lower_bound( const Key& key ) {
+		iterator lower_bound(const Key &key) {
 			return _tree.lower_bound(key);
 		}
 
-		const_iterator lower_bound( const Key& key ) const {
+		const_iterator lower_bound(const Key &key) const {
 			return _tree.lower_bound(key);
 		}
 
-		iterator upper_bound( const Key& key ) {
+		iterator upper_bound(const Key &key) {
 			return _tree.upper_bound(key);
 		}
 
-		const_iterator upper_bound( const Key& key ) const {
+		const_iterator upper_bound(const Key &key) const {
 			return _tree.upper_bound(key);
 		}
 
 		
 		// Observers
 		key_compare key_comp() const {
-			return _tree.key_comp();
+			return key_compare();
 		}
 
 		value_compare value_comp() const {
@@ -217,31 +221,36 @@ namespace ft {
 			return begin() + i;
         }
 
-		pair<iterator, bool> insert( const value_type& value ) {
+		pair<iterator, bool> insert(const value_type& value) {
 			iterator it = _tree.insert(value);
 			return ft::make_pair(it, true);
 		}
 
 		template <class InputIt>
-		void insert( InputIt first, InputIt last ) {
+		void
+		insert(InputIt first, InputIt last) {
 			_tree.insert(first, last);
 		}
 
-        void erase(iterator position) {
+        void
+		erase(iterator position) {
 			erase(position, position + 1);
         }
         
-        void erase(iterator first, iterator last) {
+        void
+		erase(iterator first, iterator last) {
 			_tree.erase(first, last);
         }
 
-        void swap(map &other) {
+        void
+		swap(map &other) {
             if (this != &other) {
                _tree.swap(other._tree);
             }
         }
 
-        void clear() {
+        void
+		clear(void) {
 			_tree.clear();
         }
     };
