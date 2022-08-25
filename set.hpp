@@ -3,9 +3,8 @@
 #include <memory>
 
 #include "pair.hpp"
-#include "normal_iterator.hpp"
 #include "reverse_iterator.hpp"
-
+#include "set_iterator.hpp"
 #include "rbt.hpp"
 
 namespace ft {
@@ -18,7 +17,6 @@ namespace ft {
 		typedef Key 									key_type;
 		typedef Key										value_type;
         typedef size_t                                  size_type;
-        typedef typename iterator::difference_type     	difference_type;
 		typedef Comp									key_compare;
 		typedef Comp									value_compare;
 
@@ -30,10 +28,12 @@ namespace ft {
 
 		typedef rbt<value_type, key_compare, allocator_type> tree_type;
 
-		typedef typename tree_type::iterator       		    iterator;
-        typedef typename tree_type::const_iterator 		    const_iterator;
-        typedef typename tree_type::reverse_iterator        reverse_iterator;
-        typedef typename tree_type::const_reverse_iterator  const_reverse_iterator;
+		typedef set_iterator<typename tree_type::iterator>			    iterator;
+		typedef set_const_iterator<typename tree_type::const_iterator>	const_iterator;
+		typedef reverse_iterator<const_iterator>						const_reverse_iterator;
+		typedef reverse_iterator<iterator>								reverse_iterator;
+
+        typedef typename iterator::difference_type     	difference_type;
 
 	private:
         tree_type _tree;
@@ -171,7 +171,8 @@ namespace ft {
         }
 
 		pair<iterator, bool> insert( const value_type& value ) {
-			return _tree.insert(value);
+			iterator it = _tree.insert(value);
+			return ft::make_pair(it, true);
 		}
 
 		template <class InputIt>

@@ -67,9 +67,9 @@ namespace ft {
 			_tree.insert(first, last);
 		}
 
-		map( const map& other ) : _tree(other._tree) {}
+		map(const map& other) : _tree(other._tree) {}
 
-		map& operator=( const map& other ) {
+		map& operator=( const map &other ) {
 			if (this != &other) {
 				_tree = other._tree;
 			}
@@ -105,11 +105,10 @@ namespace ft {
 		}
 
 		T& operator[]( const Key& key ) {
-			iterator it = find(key);
 			
 			pair<iterator, bool> ins;
-			if (it == end()) {
-				ins = insert(make_pair(key_type(key), mapped_type()));
+			if (find(key) == end()) {
+				ins = insert(make_pair(key, mapped_type()));
 			}
 			return ins->first->second;
 		}

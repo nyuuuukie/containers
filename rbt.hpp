@@ -8,14 +8,9 @@
 #include "reverse_iterator.hpp"
 #include "rbt_iterator.hpp"
 #include "rbt_node.hpp"
+#include "pair.hpp"
 
 namespace ft {
-
-template <typename T>
-void print(rbt_node<T> *node);
-
-template <typename T>
-void print_detailed(rbt_node<T> *node);
 
 template < typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T> >
 class rbt {
@@ -27,13 +22,12 @@ public:
 	typedef ptrdiff_t 				difference_type;
 	typedef Alloc 					allocator_type;
 
-
 	typedef value_type* 			pointer;
 	typedef const value_type* 		const_pointer;
 	typedef value_type& 			reference;
 	typedef const value_type& 		const_reference;
 
-	typedef rbt_node<value_type>		node_type;
+	typedef rbt_node<value_type>	node_type;
 	typedef node_type *				node_pointer;
 
 	typedef rbt_iterator<value_type>	   		iterator;
@@ -41,7 +35,8 @@ public:
 	typedef reverse_iterator<const_iterator> 	const_reverse_iterator;
 	typedef reverse_iterator<iterator>		 	reverse_iterator;
 
-	typedef typename Alloc::template rebind< rbt_node<value_type> >::other	node_allocator_type;
+	typedef typename Alloc::template rebind<rbt_node<value_type> >::other	node_allocator_type;
+
 private:
 	node_allocator_type	_alloc;
 	value_compare		_cmp;
@@ -51,60 +46,78 @@ private:
 
 public:
 	rbt(void);
+	rbt(const rbt &other);
+
+	template <class InputIt>
+	rbt(InputIt first, InputIt last, 
+		const value_compare &comp = value_compare(), 
+		const node_allocator_type &alloc = node_allocator_type());
+
+	rbt &operator=(const rbt &other);
 	~rbt(void);
-
-	iterator insert(const_reference data);
-	void remove(const_reference data);
-	node_type *search(const_reference data);
-
-	size_type size(void) const;
-	size_type height(void) const;
 
 	iterator begin(void);
 	iterator end(void);
 	reverse_iterator rbegin(void);
 	reverse_iterator rend(void);
 
+	const_iterator root(void) const;
 	const_iterator begin(void) const;
 	const_iterator end(void) const;
 	const_reverse_iterator rbegin(void) const;
 	const_reverse_iterator rend(void) const;
+	
+	bool empty(void) const;
+	size_type size(void) const;
+	size_type max_size(void) const;
 
-	node_type *get_root(void) const;
+	template<class InputIt>
+	void insert(InputIt first, InputIt last);
+	pair<iterator, bool> insert(const_reference data);
 
-	void pre_order(void (*)(node_type *) = print);
-	void in_order(void (*)(node_type *) = print);
-	void post_order(void (*)(node_type *) = print);
-	void breadth_order(void (*)(node_type *) = print);
+	size_type erase(const_reference data);
+	void erase(iterator pos);
+	void erase(iterator first, iterator last);
+
+	void clear(void);
+	void swap(rbt &other);
+	
+	size_type height(void) const;
+	iterator find(const_reference data);
+	size_type count(const_reference key) const;
+	const_iterator find(const_reference data) const;
+
+	void pre_order(void (*)(iterator));
+	void in_order(void (*)(iterator));
+	void post_order(void (*)(iterator));
+	void breadth_order(void (*)(iterator));
 
 private:
 	void rotate_right(node_type *node);
 	void rotate_left(node_type *node);
 
+	void insert(node_type *node);
+	void insert_balance(node_type *node);
+
+	void erase(node_type *node);
+	void erase_balance(node_type *node, node_type *parent);
+
 	size_type height(node_type *node) const;
+	node_type *find(node_type *node, const_reference data) const;
 
 	node_type *create_node(const_reference data);
-	node_type *search(node_type *node, const_reference data) const;
-
-	void insert(node_type *node);
-	void insert_balance_fix(node_type *node);
-
-	void remove(node_type *node);
-	void remove_balance_fix(node_type *node, node_type *parent);
-
 	void destroy_node(node_type *node);
 	void destroy_tree(node_type *node);
-
 	void swap_nodes(node_type *, node_type *);
 
-	void pre_order(node_type *node, void (*)(node_type *)) const;
-	void in_order(node_type *node, void (*)(node_type *)) const;
-	void post_order(node_type *node, void (*)(node_type *)) const;
-	void breadth_order(node_type *node, int lvl, void (*)(node_type *)) const;
+	void pre_order(node_type *node, void (*)(iterator)) const;
+	void in_order(node_type *node, void (*)(iterator)) const;
+	void post_order(node_type *node, void (*)(iterator)) const;
+	void breadth_order(node_type *node, int lvl, void (*)(iterator)) const;
 };
 
-// Public interface
 
+// Public interface
 template <typename T, typename Compare, typename Alloc >
 rbt<T, Compare, Alloc>::rbt(void) 
 : _root(NULL), _size(0) {
@@ -117,11 +130,42 @@ rbt<T, Compare, Alloc>::rbt(void)
 
 template <typename T, typename Compare, typename Alloc >
 rbt<T, Compare, Alloc>::~rbt(void) {
-	destroy_tree(_root);
+	clear();
 	destroy_node(_leaf);
 }
 
+template <typename T, typename Compare, typename Alloc >
+template <class InputIt>
+rbt<T, Compare, Alloc>::rbt(
+		InputIt first, InputIt last, 
+		const value_compare &comp, 
+		const node_allocator_type &alloc) : _cmp(comp), _alloc(alloc) {
+	while (first != last) {
+		insert(*first);
+		first++;
+	}
+}
 
+template <typename T, typename Compare, typename Alloc >
+rbt<T, Compare, Alloc>::rbt(const rbt &other) {
+	*this = other;
+}
+
+template <typename T, typename Compare, typename Alloc >
+rbt<T, Compare, Alloc> &
+rbt<T, Compare, Alloc>::operator=(const rbt &other) {
+	if (this != &other) {
+		_alloc = other._alloc;
+		_cmp = other._cmp;
+		_root = other._root;
+		_leaf = other._leaf;
+		_size = other._size;
+	}
+	return *this;
+}
+
+
+// Iterators
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::iterator 
 rbt<T, Compare, Alloc>::end(void) {
@@ -171,30 +215,181 @@ rbt<T, Compare, Alloc>::rbegin(void) const {
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rbt<T, Compare, Alloc>::node_type * 
-rbt<T, Compare, Alloc>::create_node(const_reference data) {
-
-	node_type *node = _alloc.allocate(1);
-	_alloc.construct(node, data);
-
-	node->right = _leaf;
-	node->left = _leaf;
-
-	return node;
+typename rbt<T, Compare, Alloc>::const_iterator
+rbt<T, Compare, Alloc>::root(void) const {
+	return const_iterator(_root);
 }
 
-template <typename T, typename Compare, typename Alloc >
-typename rbt<T, Compare, Alloc>::node_type * 
-rbt<T, Compare, Alloc>::get_root(void) const {
-	return _root;
-}
 
+// Capacity
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::size_type 
 rbt<T, Compare, Alloc>::size(void) const {
 	return _size;
 }
 
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::size_type 
+rbt<T, Compare, Alloc>::max_size(void) const {
+	return _alloc.max_size();
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+rbt<T, Compare, Alloc>::empty(void) const {
+	return (_size == 0);
+}
+
+
+// Modifiers
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::clear(void) {
+	destroy_tree(_root);
+	_root = NULL;
+	_leaf->parent = NULL;
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::swap(rbt &other) {
+
+	node_allocator_type	tmp_alloc = _alloc;
+	value_compare		tmp_cmp = _cmp;
+	node_type *			tmp_root = _root;
+	node_type *			tmp_leaf = _leaf;
+	size_type			tmp_size = _size;
+
+	_alloc = other._alloc;
+	_cmp = other._cmp;
+	_root = other._root;
+	_leaf = other._leaf;
+	_size = other._size;
+
+	other._alloc = tmp_alloc;
+	other._cmp = tmp_cmp;
+	other._root = tmp_root;
+	other._leaf = tmp_leaf;
+	other._size = tmp_size;
+}
+
+template <typename T, typename Compare, typename Alloc >
+template<class InputIt>
+void
+rbt<T, Compare, Alloc>::insert(InputIt first, InputIt last) {
+	while (first != last) {
+		insert(*first);
+		first++;
+	}
+}
+
+template <typename T, typename Compare, typename Alloc >
+pair<typename rbt< T, Compare, Alloc>::iterator, bool>
+rbt<T, Compare, Alloc>::insert(const_reference data) {
+
+	node_type *node = NULL;
+	try {
+		node = create_node(data);
+	} catch (std::bad_alloc &e) {
+		return ft::make_pair(end(), false); // Not like that
+	}
+
+	insert(node);
+
+	return ft::make_pair(iterator(node), true);
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::size_type
+rbt<T, Compare, Alloc>::erase(const_reference data) {
+
+	iterator it = find(data);
+	if (it != end()) {
+		erase(it.base());
+		return 1;
+    }
+	return 0;
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::erase(iterator pos) {
+	erase(pos.base());
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::erase(iterator first, iterator last) {
+	while (first != last) {
+		erase(first);
+		first++;
+	}
+}
+
+
+// Lookup
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::iterator
+rbt<T, Compare, Alloc>::find(const_reference data) {
+	return iterator(find(_root, data));
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::size_type
+rbt<T, Compare, Alloc>::height(void) const {
+	return height(_root);
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::size_type
+rbt<T, Compare, Alloc>::count(const_reference data) const {
+	
+	size_type count = 0;
+	for (node_type *tmp = _root; tmp && tmp != _leaf; ) {
+		if (!_cmp(data, tmp->data)) {
+			if (!_cmp(tmp->data, data)) {
+				count++;
+			}
+			tmp = tmp->right;
+		} else {
+			tmp = tmp->left;
+		}
+    }
+	return count;
+}
+
+
+// Functional Tree Traversal 
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::breadth_order(void (*func)(iterator)) {
+
+    const std::size_t h = height();
+    for (std::size_t i = 1; i <= h; ++i) {
+        breadth_order(_root, i, func);
+    }
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::in_order(void (*func)(iterator)) {
+    in_order(_root, func);
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::pre_order(void (*func)(iterator)) {
+    pre_order(_root, func);
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::post_order(void (*func)(iterator)) {
+    post_order(_root, func);
+}
+
+
+// Internal implementation
 template <typename T, typename Compare, typename Alloc >
 void rbt<T, Compare, Alloc>::rotate_left(node_type *node) {
 
@@ -249,17 +444,6 @@ void rbt<T, Compare, Alloc>::rotate_right(node_type *node) {
 };
 
 template <typename T, typename Compare, typename Alloc >
-typename rbt<T, Compare, Alloc>::iterator 
-rbt<T, Compare, Alloc>::insert(const_reference data) {
-
-	node_type *node = create_node(data);
-
-	insert(node);
-
-	return iterator(node);
-};
-
-template <typename T, typename Compare, typename Alloc >
 void 
 rbt<T, Compare, Alloc>::insert(node_type *node) {
 	
@@ -276,14 +460,14 @@ rbt<T, Compare, Alloc>::insert(node_type *node) {
         node->parent->left = node;
     }
 
-	insert_balance_fix(node);
+	insert_balance(node);
 	_size++;
 	_leaf->parent = rightmost_node(_root);
 };
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rbt<T, Compare, Alloc>::insert_balance_fix(node_type *node) {
+rbt<T, Compare, Alloc>::insert_balance(node_type *node) {
 
 	while (node != _root) {
 
@@ -326,94 +510,12 @@ rbt<T, Compare, Alloc>::insert_balance_fix(node_type *node) {
 }
 
 template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::destroy_tree(node_type *node) {
+void 
+rbt<T, Compare, Alloc>::erase(node_type *node) {
 
-	if (node && node != _leaf) {
-		destroy_tree(node->left);
-		destroy_tree(node->right);
-		destroy_node(node);
-	}
-}
-
-template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::destroy_node(node_type *node) {
-	
 	if (node == _leaf) {
 		return ;
-    }
-
-	node->parent = _leaf;
-	node->left = _leaf;
-	node->right = _leaf;
-
-	_alloc.deallocate(node, 1);
-}
-
-template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::remove(const_reference data) {
-
-	node_type *node = search(data);
-	if (node != _leaf) {
-		remove(node);
-    }
-}
-
-template <typename T, typename Compare, typename Alloc >
-void 
-rbt<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
-
-		node_type *tmpparent = first->parent;
-		node_type *tmpleft = first->left;
-		node_type *tmpright = first->right;
-		rb_color tmpcolor = first->color;
-
-		// Change first node
-		if (first->parent == NULL) {
-			_root = second;
-		} else if (is_left_child(first)) {
-			first->parent->left = second;
-		} else {
-			first->parent->right = second;
-		}
-
-		first->parent = second->parent;
-		first->left = second->left;
-		if (first->left) {
-			first->left->parent = first;
-		}
-		first->right = second->right;
-		if (first->right) {
-			first->right->parent = first;
-		}
-		first->color = second->color;
-
-		// Change second node
-		if (second->parent == NULL) {
-			_root = first;
-		} else if (is_left_child(second)) {
-			second->parent->left = first;
-		} else {
-			second->parent->right = first;
-		}
-
-		second->parent = tmpparent;		
-		second->left = tmpleft;
-		if (second->left) {
-			second->left->parent = second;
-		}
-		second->right = tmpright;
-		if (second->right) {
-			second->right->parent = second;
-		}
-		second->color = tmpcolor;
-}
-
-template <typename T, typename Compare, typename Alloc >
-void 
-rbt<T, Compare, Alloc>::remove(node_type *node) {
+	}
 
 	if (node->left != _leaf && node->right != _leaf) {
 		// 2 childs
@@ -436,7 +538,7 @@ rbt<T, Compare, Alloc>::remove(node_type *node) {
 	}
 
 	if (is_black(node)) {
-		remove_balance_fix(child, node->parent);
+		erase_balance(child, node->parent);
 	}
 
 	if (_leaf->parent == node) {
@@ -449,7 +551,7 @@ rbt<T, Compare, Alloc>::remove(node_type *node) {
 
 template <typename T, typename Compare, typename Alloc >
 void 
-rbt<T, Compare, Alloc>::remove_balance_fix(node_type *node, node_type *parent) {
+rbt<T, Compare, Alloc>::erase_balance(node_type *node, node_type *parent) {
 
 	while (is_black(node) && node != _root) {
 
@@ -504,14 +606,93 @@ rbt<T, Compare, Alloc>::remove_balance_fix(node_type *node, node_type *parent) {
 }
 
 template <typename T, typename Compare, typename Alloc >
-typename rbt<T, Compare, Alloc>::node_type *
-rbt<T, Compare, Alloc>::search(const_reference data) {
-	return search(_root, data);
+void 
+rbt<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
+
+		node_type *tmpparent = first->parent;
+		node_type *tmpleft = first->left;
+		node_type *tmpright = first->right;
+		rb_color tmpcolor = first->color;
+
+		// Changing first node
+		if (first->parent == NULL) {
+			_root = second;
+		} else if (is_left_child(first)) {
+			first->parent->left = second;
+		} else {
+			first->parent->right = second;
+		}
+
+		first->parent = second->parent;
+		first->left = second->left;
+		if (first->left) {
+			first->left->parent = first;
+		}
+		first->right = second->right;
+		if (first->right) {
+			first->right->parent = first;
+		}
+		first->color = second->color;
+
+		// Changing second node
+		if (second->parent == NULL) {
+			_root = first;
+		} else if (is_left_child(second)) {
+			second->parent->left = first;
+		} else {
+			second->parent->right = first;
+		}
+
+		second->parent = tmpparent;		
+		second->left = tmpleft;
+		if (second->left) {
+			second->left->parent = second;
+		}
+		second->right = tmpright;
+		if (second->right) {
+			second->right->parent = second;
+		}
+		second->color = tmpcolor;
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::destroy_tree(node_type *node) {
+
+	if (node && node != _leaf) {
+		destroy_tree(node->left);
+		destroy_tree(node->right);
+		destroy_node(node);
+	}
+}
+
+template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::destroy_node(node_type *node) {
+
+	node->parent = _leaf;
+	node->left = _leaf;
+	node->right = _leaf;
+
+	_alloc.deallocate(node, 1);
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::node_type * 
+rbt<T, Compare, Alloc>::create_node(const_reference data) {
+
+	node_type *node = _alloc.allocate(1);
+	_alloc.construct(node, data);
+
+	node->right = _leaf;
+	node->left = _leaf;
+
+	return node;
 }
 
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::node_type *
-rbt<T, Compare, Alloc>::search(node_type *node, const_reference data) const {
+rbt<T, Compare, Alloc>::find(node_type *node, const_reference data) const {
     
 	if (node == _leaf) {
 		return _leaf;
@@ -520,16 +701,10 @@ rbt<T, Compare, Alloc>::search(node_type *node, const_reference data) const {
 	if (!_cmp(data, node->data) && !_cmp(node->data, data)) {
 		return node;
     } else if (!_cmp(data, node->data)) {
-		return search(node->right, data);
+		return find(node->right, data);
 	} else {
-		return search(node->left, data);
+		return find(node->left, data);
 	}
-}
-
-template <typename T, typename Compare, typename Alloc >
-typename rbt<T, Compare, Alloc>::size_type
-rbt<T, Compare, Alloc>::height(void) const {
-	return height(_root);
 }
 
 template <typename T, typename Compare, typename Alloc >
@@ -543,37 +718,11 @@ rbt<T, Compare, Alloc>::height(node_type *node) const {
     return lmax > rmax ? lmax + 1 : rmax + 1;	
 }
 
-template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::breadth_order(void (*func)(node_type *)) {
 
-    const std::size_t h = height();
-    for (std::size_t i = 1; i <= h; ++i) {
-        breadth_order(_root, i, func);
-    }
-}
-
-template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::in_order(void (*func)(node_type *)) {
-    in_order(_root, func);
-}
-
-template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::pre_order(void (*func)(node_type *)) {
-    pre_order(_root, func);
-}
-
-template <typename T, typename Compare, typename Alloc >
-void
-rbt<T, Compare, Alloc>::post_order(void (*func)(node_type *)) {
-    post_order(_root, func);
-}
-
+// Functional Tree Traversal
 template <typename T, typename Compare, typename Alloc >
 void 
-rbt<T, Compare, Alloc>::breadth_order(node_type *node, int lvl, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::breadth_order(node_type *node, int lvl, void (*func)(iterator)) const {
 
     if (node != _leaf) {
 		if (lvl == 1) {
@@ -587,7 +736,7 @@ rbt<T, Compare, Alloc>::breadth_order(node_type *node, int lvl, void (*func)(nod
 
 template <typename T, typename Compare, typename Alloc >		 
 void
-rbt<T, Compare, Alloc>::pre_order(node_type *node, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::pre_order(node_type *node, void (*func)(iterator)) const {
     if (node != _leaf) {
 		func(node);
         pre_order(node->left, func);
@@ -597,7 +746,7 @@ rbt<T, Compare, Alloc>::pre_order(node_type *node, void (*func)(node_type *)) co
 
 template <typename T, typename Compare, typename Alloc >		 
 void
-rbt<T, Compare, Alloc>::in_order(node_type *node, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::in_order(node_type *node, void (*func)(iterator)) const {
 	if (node != _leaf) {
 		in_order(node->left, func);
 		func(node);
@@ -607,7 +756,7 @@ rbt<T, Compare, Alloc>::in_order(node_type *node, void (*func)(node_type *)) con
 
 template <typename T, typename Compare, typename Alloc >		
 void
-rbt<T, Compare, Alloc>::post_order(node_type *node, void (*func)(node_type *)) const {
+rbt<T, Compare, Alloc>::post_order(node_type *node, void (*func)(iterator)) const {
 	if (node != _leaf) {
 		post_order(node->left, func);
 		post_order(node->right, func);
@@ -615,36 +764,4 @@ rbt<T, Compare, Alloc>::post_order(node_type *node, void (*func)(node_type *)) c
 	}
 };
 
-template <typename T>
-void
-print(rbt_node<T> *node) {
-	std::cout << node->data << " ";
-}
-
-template <typename T>
-void
-print_detailed(rbt_node<T> *node) {
-
-	if (node == NULL) {
-		return ;
- 	}
-
-	struct u {
-		static std::string print_node(rbt_node<T> *node) {
-			std::stringstream ss;
-			ss << std::setw(10) << node->data << (node->color ? "(R)" : "(B)");
-			return ss.str();
-		}
- 	};
-
-	std::cout << u::print_node(node);
-	if (node->parent == NULL) {
-		std::cout << std::setw(20) << " tree's root" << std::endl; 
-	} else if (node->parent->left == node) {
-		std::cout << u::print_node(node->parent) << " -> left" << std::endl;
-	} else {
-		std::cout << u::print_node(node->parent) << " -> right" << std::endl;
-	}
-}
-
-}
+};

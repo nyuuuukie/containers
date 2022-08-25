@@ -73,7 +73,7 @@ rbt_visualizer<T>::visualize(tree_type &tree) {
     for (std::size_t lvl = 0; lvl <= h; ++lvl) {
 		_space_block = (_total_spaces - (1 << lvl) * _data_size) / (1 << (lvl + 1));
 
-		visualize_lvl(tree.get_root(), lvl);
+		visualize_lvl(tree.root().base(), lvl);
 
 		std::cout << std::endl << _line << std::endl;
 		_line.clear();

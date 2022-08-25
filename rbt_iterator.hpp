@@ -88,10 +88,10 @@ struct rbt_const_iterator {
 
 public:
 	typedef rbt_iterator<T>		non_const_iterator;
-	typedef rbt_node<T>	 node_type;
-	typedef rbt_node<T> * node_pointer;
+	typedef rbt_node<T>			node_type;
+	typedef rbt_node<T> * 		node_pointer;
 	
-	typedef iterator_traits<T *>					_traits_type;
+	typedef iterator_traits<const T *>				_traits_type;
 	typedef typename _traits_type::pointer 		    pointer;
 	typedef typename _traits_type::value_type      	value_type;
 	typedef typename _traits_type::reference      	reference;
