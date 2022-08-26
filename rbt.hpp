@@ -379,25 +379,85 @@ rbt<T, Compare, Alloc>::equal_range(const_reference key) const {
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::iterator
 rbt<T, Compare, Alloc>::lower_bound(const_reference key) {
+	
+	node_pointer tmp = _root;
+	node_pointer closest = NULL;
+	while (tmp && tmp != _leaf) {
+		if (!_cmp(tmp->data, key)) {
+			closest = tmp;
+			tmp = tmp->left;
+		} else {
+			tmp = tmp->right;
+		}
+	}
 
+	if (closest == NULL) {
+		return end();
+	}
+	return iterator(closest);
 }
 
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::const_iterator
 rbt<T, Compare, Alloc>::lower_bound(const_reference key) const {
+	
+	node_pointer tmp = _root;
+	node_pointer closest = NULL;
+	while (tmp && tmp != _leaf) {
+		if (!_cmp(tmp->data, key)) {
+			closest = tmp;
+			tmp = tmp->left;
+		} else {
+			tmp = tmp->right;
+		}
+	}
 
+	if (closest == NULL) {
+		return end();
+	}
+	return const_iterator(closest);
 }
 
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::iterator
 rbt<T, Compare, Alloc>::upper_bound(const_reference key) {
+	
+	node_pointer tmp = _root;
+	node_pointer closest = NULL;
+	while (tmp && tmp != _leaf) {
+		if (_cmp(key, tmp->data)) {
+			closest = tmp;
+			tmp = tmp->left;
+		} else {
+			tmp = tmp->right;
+		}
+	}
 
+	if (closest == NULL) {
+		return end();
+	}
+	return iterator(closest);
 }
 
 template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::const_iterator
 rbt<T, Compare, Alloc>::upper_bound(const_reference key) const {
+	
+	node_pointer tmp = _root;
+	node_pointer closest = NULL;
+	while (tmp && tmp != _leaf) {
+		if (_cmp(key, tmp->data)) {
+			closest = tmp;
+			tmp = tmp->left;
+		} else {
+			tmp = tmp->right;
+		}
+	}
 
+	if (closest == NULL) {
+		return end();
+	}
+	return const_iterator(closest);
 }
 
 // Functional Tree Traversal 
