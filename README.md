@@ -10,7 +10,7 @@ The aim of this project is to reproduce some of basic STL-containers:
 
 All containers are located in the ft namespace
 
-ft::map and ft::set implementations use red-black tree under the hood.
+ft::map and ft::set implementations are using red-black tree under the hood.
 
 ## Red-black tree
 ft::rbt implemented as a independent container and could be used separately from set or map.
@@ -55,10 +55,17 @@ int main() {
 }
 ```
 
-will produce this output to stdout:
-![VisualizatorExample](./screenshots/visualizer.png)
+will produce this output to stdout: <br>
+<img src="./screenshots/visualizer.png" width=600px />
 
-Compile
+## Compile
 
-Tests
+To compile properly you need to explicitly specify the path to the main folder of this repo.
+
+For example:
+```bash
+clang++ test.cpp -I ~/Desktop/STL-containers
+```
+
+## Tests
 
