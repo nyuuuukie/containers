@@ -115,6 +115,8 @@ private:
 	void destroy_node(node_type *node);
 	void destroy_tree(node_type *node);
 	void swap_nodes(node_type *, node_type *);
+	void create_leaf(void);
+	void destroy_leaf(void);
 
 	void pre_order(node_type *node, void (*)(iterator)) const;
 	void in_order(node_type *node, void (*)(iterator)) const;
@@ -122,11 +124,9 @@ private:
 	void breadth_order(node_type *node, int lvl, void (*)(iterator)) const;
 };
 
-
-// Public interface
 template <typename T, typename Compare, typename Alloc >
-rbt<T, Compare, Alloc>::rbt(void) 
-: _root(NULL), _size(0) {
+void
+rbt<T, Compare, Alloc>::create_leaf(void) {
 	_leaf = _alloc.allocate(1);
 	_leaf->color = black;
 	_leaf->left = NULL;
@@ -135,9 +135,23 @@ rbt<T, Compare, Alloc>::rbt(void)
 }
 
 template <typename T, typename Compare, typename Alloc >
+void
+rbt<T, Compare, Alloc>::destroy_leaf(void) {
+	destroy_node(_leaf);
+	_leaf = NULL;
+}
+
+// Public interface
+template <typename T, typename Compare, typename Alloc >
+rbt<T, Compare, Alloc>::rbt(void) 
+: _root(NULL), _leaf(NULL), _size(0) {
+	create_leaf();
+}
+
+template <typename T, typename Compare, typename Alloc >
 rbt<T, Compare, Alloc>::~rbt(void) {
 	clear();
-	destroy_node(_leaf);
+	destroy_leaf();
 }
 
 template <typename T, typename Compare, typename Alloc >
@@ -146,6 +160,7 @@ rbt<T, Compare, Alloc>::rbt(
 		InputIt first, InputIt last, 
 		const value_compare &comp, 
 		const node_allocator_type &alloc) : _cmp(comp), _alloc(alloc) {
+	create_leaf();
 	while (first != last) {
 		insert(*first);
 		first++;
@@ -153,19 +168,24 @@ rbt<T, Compare, Alloc>::rbt(
 }
 
 template <typename T, typename Compare, typename Alloc >
-rbt<T, Compare, Alloc>::rbt(const rbt &other) {
+rbt<T, Compare, Alloc>::rbt(const rbt &other) 
+	: _root(NULL), _leaf(NULL), _size(0) {
 	*this = other;
 }
 
 template <typename T, typename Compare, typename Alloc >
 rbt<T, Compare, Alloc> &
 rbt<T, Compare, Alloc>::operator=(const rbt &other) {
+	
 	if (this != &other) {
+		clear();
+		destroy_leaf();
+
 		_alloc = other._alloc;
 		_cmp = other._cmp;
-		_root = other._root;
-		_leaf = other._leaf;
-		_size = other._size;
+
+		create_leaf();
+		insert(other.begin(), other.end());
 	}
 	return *this;
 }
@@ -253,7 +273,9 @@ void
 rbt<T, Compare, Alloc>::clear(void) {
 	destroy_tree(_root);
 	_root = NULL;
-	_leaf->parent = NULL;
+	if (_leaf != NULL) {
+		_leaf->parent = NULL;
+	}
 }
 
 template <typename T, typename Compare, typename Alloc >
@@ -760,7 +782,7 @@ template <typename T, typename Compare, typename Alloc >
 void
 rbt<T, Compare, Alloc>::destroy_tree(node_type *node) {
 
-	if (node && node != _leaf) {
+	if (node != NULL && node != _leaf) {
 		destroy_tree(node->left);
 		destroy_tree(node->right);
 		destroy_node(node);
@@ -771,9 +793,13 @@ template <typename T, typename Compare, typename Alloc >
 void
 rbt<T, Compare, Alloc>::destroy_node(node_type *node) {
 
-	node->parent = _leaf;
-	node->left = _leaf;
-	node->right = _leaf;
+	if (node == NULL) {
+		return ;
+	}
+
+	node->parent = NULL;
+	node->left = NULL;
+	node->right = NULL;
 
 	_alloc.deallocate(node, 1);
 }

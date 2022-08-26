@@ -56,9 +56,9 @@ class vector {
 			__insert(begin(), first, last, check_integral());
 		}
         
-        vector(const vector& x) 
-        : _allocator(x.get_allocator()), _start(), _finish(), _storage_end() {
-			insert(begin(), x.first(), x.last());
+        vector(const vector &other) 
+        : _allocator(other.get_allocator()), _start(), _finish(), _storage_end() {
+			insert(begin(), other.begin(), other.end());
         }
 
         vector &operator=(const vector &x) {
@@ -181,12 +181,12 @@ class vector {
         }
         
         reference at (size_type n) {
-            range_check();
+            range_check(n);
             return (*this)[n];
         }
         
         const_reference at (size_type n) const {
-            range_check();
+            range_check(n);
             return (*this)[n];
         }
 

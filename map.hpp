@@ -111,11 +111,11 @@ namespace ft {
 			
 			iterator it = find(key);
 			if (it != end()) {
-				return it;
+				return it->second;
 			}
 		
 			pair<iterator, bool> ins = insert(ft::make_pair(key, mapped_type()));
-			return ins->first->second;
+			return ins.first->second;
 		}
 
         // Iterators
@@ -172,11 +172,11 @@ namespace ft {
 		}
 
 		iterator find(const Key &key) {
-			return _tree.find(key);
+			return _tree.find(ft::make_pair(key, mapped_type()));
 		}
 
 		const_iterator find(const Key &key) const {
-			return _tree.find(key);
+			return _tree.find(ft::make_pair(key, mapped_type()));
 		}
 
 		pair<iterator, iterator> equal_range(const Key &key) {
@@ -222,8 +222,7 @@ namespace ft {
         }
 
 		pair<iterator, bool> insert(const value_type& value) {
-			iterator it = _tree.insert(value);
-			return ft::make_pair(it, true);
+			return _tree.insert(value);
 		}
 
 		template <class InputIt>
