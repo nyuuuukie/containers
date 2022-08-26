@@ -42,3 +42,5 @@ a.out
 .DS_Store
 
 Icon
+
+*.dSYM
