@@ -8,19 +8,34 @@ The aim of this project is to reproduce some of basic STL-containers:
 - [std::map](http://www.cplusplus.com/reference/map/map)
 - [std::set](http://www.cplusplus.com/reference/set/set)
 
-All the containers are located in the ft namespace
+All containers are located in the ft namespace
 
-ft::map and ft::set implementations use Red-Black Tree as the underlying data structure.
+ft::map and ft::set implementations use red-black tree under the hood.
 
 ## Red-black tree
 ft::rbt implemented as a independent container and could be used separately from set or map.
 ```c++
 #include "rbt.hpp"
+
+int main() {
+
+    ft::rbt<int> tree;
+    for (int i = 1; i < 10; i++) {
+        tree.insert(i);
+    }
+    tree.erase(6);
+
+    return 0;
+}
 ```
 
-### Console visualizer
+## Console red-black tree visualizer
 
-For example, these lines
+The visualizer implemented as a separated template class, with the same value type as the tree.
+
+### Usage
+
+These lines
 
 ```c++
 #include "rbt.hpp"
