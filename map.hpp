@@ -215,13 +215,11 @@ namespace ft {
         
 
 		// Modifiers
-        iterator insert(iterator position, const value_type& val) {
-			size_type i = ft::distance(begin(), position);
-			insert(position, 1, val);
-			return begin() + i;
+        iterator insert(iterator hint, const value_type &val) {	
+			return _tree.insert(hint, val);
         }
 
-		pair<iterator, bool> insert(const value_type& value) {
+		pair<iterator, bool> insert(const value_type &value) {
 			return _tree.insert(value);
 		}
 

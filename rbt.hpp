@@ -74,6 +74,7 @@ public:
 	template<class InputIt>
 	void insert(InputIt first, InputIt last);
 	pair<iterator, bool> insert(const_reference data);
+	iterator insert(iterator hint, const_reference data);
 
 	size_type erase(const_reference data);
 	void erase(iterator pos);
@@ -325,6 +326,14 @@ rbt<T, Compare, Alloc>::insert(const_reference data) {
 	insert(node);
 
 	return ft::make_pair(iterator(node), true);
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::iterator 
+rbt<T, Compare, Alloc>::insert(iterator hint, const_reference data) {
+	(void)hint;
+	pair<iterator, bool> p = insert(data);
+	return p->first;
 }
 
 template <typename T, typename Compare, typename Alloc >
