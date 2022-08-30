@@ -3,14 +3,11 @@
 #include <iostream>
 
 #include "rbt.hpp"
+#include "rbt_node.hpp"
 
 namespace ft {
 
-template<typename T>
 struct rbt_visualizer {
-
-	typedef rbt<T>							tree_type;
-	typedef typename tree_type::node_type	node_type;
 
 private:
 	unsigned long long _data_size;
@@ -25,13 +22,20 @@ private:
 	char _hline;
 	char _vline;
 
-	void visualize_lvl(node_type *node, int lvl, bool lchild = false);
+	void init(void);
+
+	template <typename T>
+	void visualize_lvl(rbt_node<T> *node, int lvl, bool lchild = false);
 
 public:
+	template <typename T, typename C, typename A>
+	explicit rbt_visualizer(ft::rbt<T, C, A> &tree);
+	
 	rbt_visualizer(void);
 	~rbt_visualizer(void);
 
-	void visualize(tree_type &tree);
+	template <typename T, typename C, typename A>
+	void visualize(ft::rbt<T, C, A> &tree);
 };
 
 std::string 
@@ -48,9 +52,9 @@ center(std::string title, int width, bool lchild = false) {
 	return (left + title + right);
 }
 
-template <typename T>
-rbt_visualizer<T>::rbt_visualizer(void) {
-	_data_size = 2;
+void
+rbt_visualizer::init(void) {
+	_data_size = 4;
 	_space_block_size = 1;
 	_red = "\033[48;5;196;38;5;232m";
 	_black = "\033[48;5;232;38;5;231m";
@@ -60,12 +64,21 @@ rbt_visualizer<T>::rbt_visualizer(void) {
 	_vline = '|';
 }
 
-template <typename T>
-rbt_visualizer<T>::~rbt_visualizer(void) {}
+template <typename T, typename C, typename A>
+rbt_visualizer::rbt_visualizer(ft::rbt<T, C, A> &tree) {
+	init();
+	visualize();
+}
 
-template <typename T>
+rbt_visualizer::rbt_visualizer(void) {
+	init();
+}
+
+rbt_visualizer::~rbt_visualizer(void) {}
+
+template <typename T, typename C, typename A>
 void
-rbt_visualizer<T>::visualize(tree_type &tree) {
+rbt_visualizer::visualize(ft::rbt<T, C, A> &tree) {
 
 	std::size_t h = tree.height();
 
@@ -83,9 +96,10 @@ rbt_visualizer<T>::visualize(tree_type &tree) {
 	std::cout << "\033[39;49m";
 }
 
+
 template <typename T>
 void
-rbt_visualizer<T>::visualize_lvl(node_type *node, int lvl, bool lchild) {
+rbt_visualizer::visualize_lvl(rbt_node<T> *node, int lvl, bool lchild) {
 
 	if (lvl == 0) {
 		if (is_leaf_node(node)) {
