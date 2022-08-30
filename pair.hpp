@@ -5,23 +5,20 @@ namespace ft {
 	template <class T1, class T2> 
 	struct pair {
 
-		// Member types
 		typedef T1 first_type;
 		typedef T2 second_type;
 
-		// Member objects
 		T1 first;
 		T2 second;
 
-		// Member functions
 		pair()
 		: first(), second() { }
 
-		pair(const T1& _first, const T2& _second)
-		: first(_first), second(_second) { }
+		pair(const T1 &first, const T2 &second)
+		: first(first), second(second) { }
 
 	    template<typename U1, typename U2>
-		pair(const pair<U1, U2>& p)
+		pair(const pair<U1, U2> &p)
 		: first(p.first), second(p.second) { }
 	};
 
@@ -33,7 +30,7 @@ namespace ft {
 	template<typename T1, typename T2>
     inline bool
     operator<(const pair<T1, T2>& lhs, const pair<T1, T2>& rhs)
-    { return lhs.first < rhs.first || lhs.second < rhs.second; }
+    { return (lhs.first < rhs.first) || (lhs.first == rhs.first && lhs.second < rhs.second); }
 
 	template<typename T1, typename T2>
     inline bool
