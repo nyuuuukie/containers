@@ -9,6 +9,8 @@
 #include "rbt_iterator.hpp"
 #include "rbt_node.hpp"
 #include "pair.hpp"
+#include "lexicographical_compare.hpp"
+#include "equal.hpp"
 
 namespace ft {
 
@@ -36,6 +38,8 @@ public:
 	typedef reverse_iterator<iterator>		 	reverse_iterator;
 
 	typedef typename Alloc::template rebind<rbt_node<value_type> >::other	node_allocator_type;
+
+	friend struct rbt_visualizer;
 
 private:
 	node_allocator_type	_alloc;
@@ -320,7 +324,7 @@ rbt<T, Compare, Alloc>::insert(const_reference data) {
 	try {
 		node = create_node(data);
 	} catch (std::bad_alloc &e) {
-		return ft::make_pair(end(), false); // Not like that
+		return ft::make_pair(lower_bound(data), false);
 	}
 
 	insert(node);
@@ -333,7 +337,7 @@ typename rbt<T, Compare, Alloc>::iterator
 rbt<T, Compare, Alloc>::insert(iterator hint, const_reference data) {
 	(void)hint;
 	pair<iterator, bool> p = insert(data);
-	return p->first;
+	return p.first;
 }
 
 template <typename T, typename Compare, typename Alloc >
@@ -518,6 +522,44 @@ template <typename T, typename Compare, typename Alloc >
 void
 rbt<T, Compare, Alloc>::post_order(void (*func)(iterator)) {
     post_order(_root, func);
+}
+
+
+// Non-member comparison overloads
+template <typename T, typename Compare, typename Alloc >
+bool
+operator==(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return x.size() == y.size() && ft::equal(x.begin(), x.end(), y.begin());
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator<(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator!=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return !(x == y);
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator>(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return y < x;
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator<=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return !(y < x);
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator>=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return !(x < y);
 }
 
 
@@ -830,7 +872,7 @@ template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::node_type *
 rbt<T, Compare, Alloc>::find(node_type *node, const_reference data) const {
     
-	if (node == _leaf) {
+	if (node == NULL || node == _leaf) {
 		return _leaf;
 	}
 	
