@@ -4,105 +4,149 @@
 
 namespace ft {
 
-	template <class T, class Container = ft::vector<T> >
-	class stack {
+template <class T, class Container = ft::vector<T> >
+class stack {
 
-	public:
-		typedef Container 							container_type;
-		typedef typename Container::value_type		value_type;
-		typedef typename Container::size_type		size_type;
-		typedef typename Container::reference  		reference;
-		typedef typename Container::const_reference const_reference;
+public:
+	typedef Container 							container_type;
+	typedef typename Container::value_type		value_type;
+	typedef typename Container::size_type		size_type;
+	typedef typename Container::reference  		reference;
+	typedef typename Container::const_reference const_reference;
 
-		// Member functions
-		explicit stack(const Container &cont = Container()) : c(cont) {}
+	// Member functions
+	explicit stack(const Container &container = Container()) : c(container) {}
 		
-		stack(stack &other) {
-			std::cout << "stack::copy const" << std::endl;
-			*this = other;
-		}
-		~stack() {}
+	stack(stack &other);
+	~stack() {}
 		
-		stack &operator=(const stack &other) {
-			std::cout << "stack::operator=" << std::endl;
-			if (this != &other) {
-				c = other.c;
-			}
-			return *this;
-		}
+	stack &operator=(const stack &other);
 
-		// Element access
-		reference top() {
-			return c.back();
-		}
+	// Element access
+	reference top(void);
+	const_reference top(void) const;
 
-		const_reference top() const {
-			return c.back();
-		}
-		
-		// Capacity
-		bool empty() const {
-			return c.empty();
-		}
 
-		size_type size() const {
-			return c.size();
-		}
+	// Capacity
+	bool empty(void) const;
+	size_type size(void) const;
 
-		// Modifiers
-		void push(const value_type &value) {
-			c.push_back(value);
-		}
 
-		void pop() {
-			c.pop_back();
-		}
+	// Modifiers
+	void push(const value_type &value);
+	void pop(void);
 
-		bool operator==(const stack<T, Container> &rhs) {
-			return c == rhs.c;
-		}
-		bool operator<(const stack<T, Container> &rhs) {
-			return c < rhs.c;
-		}
 
-		// Member objects
-	protected:
-		Container c;
+	bool operator==(const stack<T, Container> &rhs);
+	bool operator<(const stack<T, Container> &rhs);
 
-	private:
-		
+
+protected:
+	// Member objects
+	Container c;
 
 };
 
-	// Non-member functions
-	template <class T, class Container>
-	inline bool operator==(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-		return lhs == rhs;
-	}
+template <class T, class Container>
+stack<T, Container>::stack(const Container &cont) : c(cont) {}
+		
+template <class T, class Container>
+stack<T, Container>::stack(stack &other) {
+	std::cout << "stack::copy const" << std::endl;
+	*this = other;
+}
 
-	template <class T,  class Container>
-	inline bool operator<(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-		return lhs < rhs;
+template <class T, class Container>
+stack<T, Container>::~stack() {}
+		
+template <class T, class Container>
+stack<T, Container>& stack<T, Container>::operator=(const stack &other) {
+	std::cout << "stack::operator=" << std::endl;
+	if (this != &other) {
+		c = other.c;
 	}
+	return *this;
+}
 
-	template <class T,  class Container>
-	inline bool operator!=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-		return !(lhs == rhs);
-	}
+template <class T, class Container>
+typename stack<T, Container>::reference 
+stack<T, Container>::top(void) {
+	return c.back();
+}
 
-	template <class T,  class Container>
-	inline bool operator>=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-		return !(lhs < rhs);
-	}
+template <class T, class Container>
+typename stack<T, Container>::const_reference
+stack<T, Container>::top(void) const {
+	return c.back();
+}
 
-	template <class T, class Container>
-	inline bool operator<=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-		return !(rhs < lhs);
-	}
+template <class T, class Container>
+bool
+stack<T, Container>::empty() const {
+	return c.empty();
+}
 
-	template <class T,  class Container>
-	inline bool operator>(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-		return rhs < lhs;
-	}
+template <class T, class Container>
+typename stack<T, Container>::size_type
+stack<T, Container>::size(void) const {
+	return c.size();
+}
+
+
+template <class T, class Container>
+void
+stack<T, Container>::push(const value_type &value) {
+	c.push_back(value);
+}
+
+template <class T, class Container>
+void
+stack<T, Container>::pop(void) {
+	c.pop_back();
+}
+
+template <class T, class Container>
+bool
+stack<T, Container>::operator==(const stack<T, Container> &rhs) {
+	return c == rhs.c;
+}
+
+template <class T, class Container>
+bool
+stack<T, Container>::operator<(const stack<T, Container> &rhs) {
+	return c < rhs.c;
+}
+
+
+// Non-member functions
+template <class T, class Container>
+inline bool operator==(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	return lhs == rhs;
+}
+
+template <class T,  class Container>
+inline bool operator<(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	return lhs < rhs;
+}
+
+template <class T,  class Container>
+inline bool operator!=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	return !(lhs == rhs);
+}
+
+template <class T,  class Container>
+inline bool operator>=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	return !(lhs < rhs);
+}
+
+template <class T, class Container>
+inline bool operator<=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	return !(rhs < lhs);
+}
+
+template <class T,  class Container>
+inline bool operator>(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	return rhs < lhs;
+}
 
 };
