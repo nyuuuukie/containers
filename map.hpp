@@ -67,7 +67,7 @@ public:
 
 	map& operator=(const map &other);
 	
-	~map(void) {}
+	~map(void);
 
 
 	// Allocator
@@ -381,7 +381,7 @@ map<Key, T, Comp, Alloc>::erase(iterator first, iterator last) {
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::size_type
-erase(const Key &key) {
+map<Key, T, Comp, Alloc>::erase(const Key &key) {
 	return _tree.erase(ft::make_pair(key, mapped_type()));
 }
 
