@@ -67,7 +67,7 @@ rbt_visualizer::init(void) {
 template <typename T, typename C, typename A>
 rbt_visualizer::rbt_visualizer(ft::rbt<T, C, A> &tree) {
 	init();
-	visualize();
+	visualize(tree);
 }
 
 rbt_visualizer::rbt_visualizer(void) {

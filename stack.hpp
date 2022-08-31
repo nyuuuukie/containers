@@ -15,10 +15,10 @@ public:
 	typedef typename Container::const_reference const_reference;
 
 	// Member functions
-	explicit stack(const Container &container = Container()) : c(container) {}
+	explicit stack(const Container &container = Container());
 		
 	stack(stack &other);
-	~stack() {}
+	~stack(void);
 		
 	stack &operator=(const stack &other);
 
@@ -36,10 +36,11 @@ public:
 	void push(const value_type &value);
 	void pop(void);
 
+	template <class V, class U>
+	friend bool operator==(const stack<V, U> &lhs, const stack<V, U> &rhs);
 
-	bool operator==(const stack<T, Container> &rhs);
-	bool operator<(const stack<T, Container> &rhs);
-
+	template <class V, class U>
+	friend bool operator<(const stack<V, U> &lhs, const stack<V, U> &rhs);
 
 protected:
 	// Member objects
@@ -57,7 +58,7 @@ stack<T, Container>::stack(stack &other) {
 }
 
 template <class T, class Container>
-stack<T, Container>::~stack() {}
+stack<T, Container>::~stack(void) {}
 		
 template <class T, class Container>
 stack<T, Container>& stack<T, Container>::operator=(const stack &other) {
@@ -105,28 +106,28 @@ stack<T, Container>::pop(void) {
 	c.pop_back();
 }
 
-template <class T, class Container>
-bool
-stack<T, Container>::operator==(const stack<T, Container> &rhs) {
-	return c == rhs.c;
-}
+// template <class T, class Container>
+// bool
+// stack<T, Container>::operator==(const stack<T, Container> &rhs) {
+// 	return c == rhs.c;
+// }
 
-template <class T, class Container>
-bool
-stack<T, Container>::operator<(const stack<T, Container> &rhs) {
-	return c < rhs.c;
-}
+// template <class T, class Container>
+// bool
+// stack<T, Container>::operator<(const stack<T, Container> &rhs) {
+// 	return c < rhs.c;
+// }
 
 
 // Non-member functions
 template <class T, class Container>
 inline bool operator==(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-	return lhs == rhs;
+	return lhs.c == rhs.c;
 }
 
 template <class T,  class Container>
 inline bool operator<(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
-	return lhs < rhs;
+	return lhs.c < rhs.c;
 }
 
 template <class T,  class Container>
