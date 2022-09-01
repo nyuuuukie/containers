@@ -106,19 +106,6 @@ stack<T, Container>::pop(void) {
 	c.pop_back();
 }
 
-// template <class T, class Container>
-// bool
-// stack<T, Container>::operator==(const stack<T, Container> &rhs) {
-// 	return c == rhs.c;
-// }
-
-// template <class T, class Container>
-// bool
-// stack<T, Container>::operator<(const stack<T, Container> &rhs) {
-// 	return c < rhs.c;
-// }
-
-
 // Non-member functions
 template <class T, class Container>
 inline bool operator==(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {

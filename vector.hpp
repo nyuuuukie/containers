@@ -26,7 +26,7 @@ public:
     typedef ft::reverse_iterator<const_iterator> 		const_reverse_iterator;
 
     typedef T                                       	value_type;
-    typedef size_t                                  	size_type;
+    typedef std::size_t                                 size_type;
     typedef Alloc                                   	allocator_type;
     typedef typename iterator::difference_type      	difference_type;
 
@@ -77,7 +77,8 @@ public:
     const_reference front(void) const;
     reference back(void);
     const_reference back(void) const;
-    
+    const_pointer data(void) const;
+    pointer data(void);    
 
     template <class InputIt>
     void assign(InputIt first, InputIt last);
@@ -113,9 +114,11 @@ private:
 
     template <typename InputIt>
     void _insert(iterator pos, InputIt first, InputIt last, integral_false_type);
+    void _insert(iterator pos, size_type n, const value_type &val, integral_true_type);
 
     template <typename InputIt>
     void _assign(InputIt first, InputIt last, integral_false_type);
+    void _assign(size_type n, const value_type &val, integral_true_type);
 
 };
 
@@ -126,12 +129,14 @@ vector<T, Alloc>::vector(const allocator_type &alloc)
 template <typename T, typename Alloc>
 vector<T, Alloc>::vector(size_type n, const value_type &val, const allocator_type &alloc) 
 : _alloc(alloc), _beg(NULL), _data_end(NULL), _storage_end(NULL) {
-    insert(begin(), n, val);
+    typedef typename is_integral<size_type>::type check_integral;
+
+    _insert(begin(), n, val, check_integral());
 }
         
 template <typename T, typename Alloc>
 template <class InputIt>
-vector<T, Alloc>::vector(InputIt first, InputIt last, const allocator_type& alloc)
+vector<T, Alloc>::vector(InputIt first, InputIt last, const allocator_type &alloc)
 : _alloc(alloc), _beg(NULL), _data_end(NULL), _storage_end(NULL) {
     typedef typename is_integral<InputIt>::type check_integral;
 
@@ -186,7 +191,7 @@ vector<T, Alloc>::rend(void) {
 template <typename T, typename Alloc>
 typename vector<T, Alloc>::reverse_iterator
 vector<T, Alloc>::rbegin(void) {
-    return reverse_iterator(--end());
+    return reverse_iterator(end());
 }
 
 template <typename T, typename Alloc>
@@ -261,6 +266,7 @@ vector<T, Alloc>::reserve(size_type n) {
 
     if (n > capacity()) {
 
+        size_type size = this->size();
         pointer new_storage = _alloc.allocate(n);
 
         pointer src = _beg;
@@ -272,7 +278,7 @@ vector<T, Alloc>::reserve(size_type n) {
         _alloc.deallocate(_beg, capacity());
 
         _beg = new_storage;
-        _data_end = new_storage + size();
+        _data_end = new_storage + size;
         _storage_end = new_storage + n;
     }
 }
@@ -340,6 +346,17 @@ vector<T, Alloc>::back(void) const {
     return *(end() - 1);
 }
 
+template <typename T, typename Alloc>
+typename vector<T, Alloc>::const_pointer
+vector<T, Alloc>::data(void) const {
+    return _beg;
+}
+
+template <typename T, typename Alloc>
+typename vector<T, Alloc>::pointer
+vector<T, Alloc>::data(void) {
+    return _beg;
+}
 
 // Modifiers
 template <typename T, typename Alloc>
@@ -354,14 +371,9 @@ vector<T, Alloc>::assign(InputIt first, InputIt last) {
 template <typename T, typename Alloc>
 void
 vector<T, Alloc>::assign(size_type n, const value_type &val) {
+    typedef typename is_integral<size_type>::type check_integral;
 
-    if (n >= capacity()) {
-        vector tmp(n, val, get_allocator());
-        swap(tmp);
-    } else {
-        clear();
-        insert(begin(), n, val);
-    }
+    _assign(n, val, check_integral());
 }
 
 template <typename T, typename Alloc>
@@ -382,22 +394,18 @@ vector<T, Alloc>::pop_back(void) {
 template <typename T, typename Alloc>
 void
 vector<T, Alloc>::insert(iterator pos, size_type n, const value_type &val) {
+    typedef typename is_integral<size_type>::type check_integral;
 
-    if (n == 0) {
-        return ;
-    } else if (size() + n < capacity()) {
-        _noalloc_insert_impl(pos, n, val);
-    } else {
-        _realloc_insert_impl(pos, n, val);
-    }
+    _insert(pos, n, val, check_integral());
 }
 
 template <typename T, typename Alloc>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::insert(iterator pos, const value_type& val) {
+    typedef typename is_integral<size_type>::type check_integral;
 
     size_type i = ft::distance(begin(), pos);
-    insert(pos, 1, val);
+    _insert(pos, 1, val, check_integral());
     return begin() + i;
 }
 
@@ -512,6 +520,19 @@ vector<T, Alloc>::_assign(InputIt first, InputIt last, integral_false_type) {
 }
 
 template <typename T, typename Alloc>
+void
+vector<T, Alloc>::_assign(size_type n, const value_type &val, integral_true_type) {
+
+    if (n >= capacity()) {
+        vector tmp(n, val, get_allocator());
+        swap(tmp);
+    } else {
+        clear();
+        insert(begin(), n, val);
+    }
+}
+
+template <typename T, typename Alloc>
 template <typename InputIt>
 void
 vector<T, Alloc>::_insert(iterator pos, InputIt first, InputIt last, integral_false_type) {
@@ -524,6 +545,19 @@ vector<T, Alloc>::_insert(iterator pos, InputIt first, InputIt last, integral_fa
         _noalloc_insert_impl(pos, n, first, last);
     } else {
         _realloc_insert_impl(pos, n, first, last);
+    }
+}
+
+template <typename T, typename Alloc>
+void
+vector<T, Alloc>::_insert(iterator pos, size_type n, const value_type &val, integral_true_type) {
+
+    if (n == 0) {
+        return ;
+    } else if (size() + n < capacity()) {
+        _noalloc_insert_impl(pos, n, val);
+    } else {
+        _realloc_insert_impl(pos, n, val);
     }
 }
 
@@ -667,19 +701,19 @@ operator<(const vector<T, Alloc> &a, const vector<T, Alloc> &b) {
 template < typename T, typename Alloc >
 inline bool
 operator<=(const vector<T, Alloc> &a, const vector<T, Alloc> &b) {
-    return !(a < b);
+    return !(b < a);
 }
 
 template < typename T, typename Alloc >
 inline bool
 operator>(const vector<T, Alloc> &a, const vector<T, Alloc> &b) {
-    return b < a;
+    return !(a <= b);
 }
 
 template < typename T, typename Alloc >
 inline bool
 operator>=(const vector<T, Alloc> &a, const vector<T, Alloc> &b) {
-    return !(b < a);
+    return !(a < b);
 }
 
 template < typename T, typename Alloc>
