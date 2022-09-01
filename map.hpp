@@ -129,6 +129,8 @@ public:
 	template <typename K, typename M, typename C, typename A> 
 	friend bool	operator<(const map<K, M, C, A> &lhs, const map<K, M, C, A> &rhs);
 
+private:
+	bool key_exist(const Key &key);
 };
 
 template <typename Key, typename T, typename Comp, typename Alloc>
@@ -142,7 +144,7 @@ template <typename Key, typename T, typename Comp, typename Alloc>
 template <class InputIt>
 map<Key, T, Comp, Alloc>::map(InputIt first, InputIt last, const key_compare &comp, const Alloc &alloc) {
 	// Change comparator and allocator ?
-	_tree.insert(first, last);
+	insert(first, last);
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>
@@ -175,7 +177,7 @@ map<Key, T, Comp, Alloc>::at(const Key &key) {
 	iterator it = find(key);
 	
 	if (it == end()) {
-		throw std::out_of_range("map::at() - value not found");
+		throw std::out_of_range("map::at:  key not found");
 	}
 	return it->second;
 }
@@ -186,9 +188,15 @@ map<Key, T, Comp, Alloc>::at(const Key &key) const {
 	const_iterator it = find(key);
 	
 	if (it == end()) {
-		throw std::out_of_range("map::at() - value not found");
+		throw std::out_of_range("map::at:  key not found");
 	}
 	return it->second;
+}
+
+template <typename Key, typename T, typename Comp, typename Alloc>	
+bool
+map<Key, T, Comp, Alloc>::key_exist(const Key &key) {
+	return (find(key) != end());
 }
 
 
@@ -222,13 +230,13 @@ map<Key, T, Comp, Alloc>::begin(void) {
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::reverse_iterator
 map<Key, T, Comp, Alloc>::rend(void) {
-	return _tree.rend();
+	return reverse_iterator(iterator(_tree.begin()));
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::reverse_iterator
 map<Key, T, Comp, Alloc>::rbegin(void) {
-	return _tree.rbegin();
+	return reverse_iterator(iterator(_tree.end()));
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
@@ -246,13 +254,13 @@ map<Key, T, Comp, Alloc>::begin(void) const {
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::const_reverse_iterator
 map<Key, T, Comp, Alloc>::rend(void) const {
-	return _tree.rend();
+	return const_reverse_iterator(const_iterator(_tree.begin()));
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::const_reverse_iterator
 map<Key, T, Comp, Alloc>::rbegin(void) const {
-	return _tree.rbegin();
+	return const_reverse_iterator(const_iterator(_tree.end()));
 }
 
 
@@ -349,13 +357,19 @@ map<Key, T, Comp, Alloc>::value_comp() const {
 // Modifiers
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::iterator
-map<Key, T, Comp, Alloc>::insert(iterator hint, const value_type &val) {	
-	return _tree.insert(hint.base(), val);
+map<Key, T, Comp, Alloc>::insert(iterator hint, const value_type &value) {
+	if (key_exist(value.first)) {
+		return --upper_bound(value.first);
+	}
+	return _tree.insert(hint.base(), value);
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 pair<typename map<Key, T, Comp, Alloc>::iterator, bool>
 map<Key, T, Comp, Alloc>::insert(const value_type &value) {
+	if (key_exist(value.first)) {
+		return ft::make_pair(--upper_bound(value.first), false);
+	}
 	return _tree.insert(value);
 }
 
@@ -363,7 +377,10 @@ template <typename Key, typename T, typename Comp, typename Alloc>
 template <class InputIt>
 void
 map<Key, T, Comp, Alloc>::insert(InputIt first, InputIt last) {
-	_tree.insert(first, last);
+	while (first != last) {
+		insert(*first);
+		first++;
+	}
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	

@@ -102,7 +102,10 @@ class set {
 
 		template <typename K, typename C, typename A> 
 		friend bool	operator<(const set<K, C, A> &lhs, const set<K, C, A> &rhs);
-    };
+    
+	private:
+		bool key_exist(const Key &key);
+	};
 
 	template <typename Key, typename Comp, typename Alloc> 
 	set<Key, Comp, Alloc>::set(void) {}
@@ -115,7 +118,7 @@ class set {
 	template <class InputIt>
 	set<Key, Comp, Alloc>::set(InputIt first, InputIt last, const Comp &comp, const Alloc &alloc)
 	: _comp(comp) {
-		_tree.insert(first, last);
+		insert(first, last);
 	}
 
 	template <typename Key, typename Comp, typename Alloc> 
@@ -160,13 +163,13 @@ class set {
 	template <typename Key, typename Comp, typename Alloc>
 	typename set<Key, Comp, Alloc>::reverse_iterator
 	set<Key, Comp, Alloc>::rend(void) {
-		return reverse_iterator(iterator(_tree.end()));
+		return reverse_iterator(iterator(_tree.begin()));
 	}
 	
 	template <typename Key, typename Comp, typename Alloc>
 	typename set<Key, Comp, Alloc>::reverse_iterator
 	set<Key, Comp, Alloc>::rbegin(void) {
-		return reverse_iterator(--iterator(_tree.end()));
+		return reverse_iterator(iterator(_tree.end()));
 	}
 	
 	template <typename Key, typename Comp, typename Alloc>
@@ -184,13 +187,13 @@ class set {
 	template <typename Key, typename Comp, typename Alloc>
 	typename set<Key, Comp, Alloc>::const_reverse_iterator
 	set<Key, Comp, Alloc>::rend(void) const {
-		return const_reverse_iterator(const_iterator(_tree.end()));
+		return const_reverse_iterator(const_iterator(_tree.begin()));
 	}
 	
 	template <typename Key, typename Comp, typename Alloc>
 	typename set<Key, Comp, Alloc>::const_reverse_iterator
 	set<Key, Comp, Alloc>::rbegin(void) const {
-		return const_reverse_iterator(--const_iterator(_tree.end()));
+		return const_reverse_iterator(const_iterator(_tree.end()));
 	}
 
 
@@ -214,7 +217,13 @@ class set {
 	}
 
         
-	// Lookup 
+	// Lookup
+	template <typename Key, typename Comp, typename Alloc>	
+	bool
+	set<Key, Comp, Alloc>::key_exist(const Key &key) {
+		return (find(key) != end());
+	}
+
 	template <typename Key, typename Comp, typename Alloc>
 	typename set<Key, Comp, Alloc>::size_type
 	set<Key, Comp, Alloc>::count(const Key &key) const {
@@ -287,13 +296,19 @@ class set {
 	// Modifiers
 	template <typename Key, typename Comp, typename Alloc>
 	typename set<Key, Comp, Alloc>::iterator
-	set<Key, Comp, Alloc>::insert(iterator hint, const value_type &val) {
-		return _tree.insert(hint.base(), val);
+	set<Key, Comp, Alloc>::insert(iterator hint, const value_type &value) {
+		if (key_exist(value)) {
+			return --upper_bound(value);
+		}
+		return _tree.insert(hint.base(), value);
 	}
 
 	template <typename Key, typename Comp, typename Alloc>
 	pair<typename set<Key, Comp, Alloc>::iterator, bool>
 	set<Key, Comp, Alloc>::insert(const value_type &value) {
+		if (key_exist(value)) {
+			return ft::make_pair(--upper_bound(value), false);
+		}
 		return _tree.insert(value);
 	}
 
@@ -301,7 +316,10 @@ class set {
 	template <class InputIt>
 	void
 	set<Key, Comp, Alloc>::insert(InputIt first, InputIt last) {
-		_tree.insert(first, last);
+		while (first != last) {
+			insert(*first);
+			first++;
+		}
 	}
 
 	template <typename Key, typename Comp, typename Alloc>

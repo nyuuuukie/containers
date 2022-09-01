@@ -282,6 +282,7 @@ rbt<T, Compare, Alloc>::clear(void) {
 	if (_leaf != NULL) {
 		_leaf->parent = NULL;
 	}
+	_size = 0;
 }
 
 template <typename T, typename Compare, typename Alloc >
