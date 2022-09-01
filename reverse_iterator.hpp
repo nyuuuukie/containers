@@ -45,12 +45,14 @@ namespace ft {
 
             reference operator*() const {
                 _Iterator tmp = _current;
+                tmp--;
                 return *tmp;
             }
 
             pointer operator->() const {
                 _Iterator tmp = _current;
-                return &(*tmp);
+                tmp--;
+                return *tmp;
             }
 
             reverse_iterator& operator++() {
