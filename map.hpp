@@ -69,7 +69,6 @@ public:
 	
 	~map(void);
 
-
 	// Allocator
 	allocator_type get_allocator() const;
 
@@ -106,8 +105,8 @@ public:
 	const_iterator upper_bound(const Key &key) const;
 		
 	// Observers
-	key_compare key_comp() const;
-	value_compare value_comp() const;
+	key_compare key_comp(void) const;
+	value_compare value_comp(void) const;
         
 
 	// Modifiers
@@ -211,13 +210,13 @@ map<Key, T, Comp, Alloc>::operator[](const Key &key) {
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::iterator
 map<Key, T, Comp, Alloc>::end(void) {
-	return _tree.end();
+	return iterator(_tree.end());
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::iterator
 map<Key, T, Comp, Alloc>::begin(void) {
-	return _tree.begin();
+	return iterator(_tree.begin());
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
@@ -235,13 +234,13 @@ map<Key, T, Comp, Alloc>::rbegin(void) {
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::const_iterator
 map<Key, T, Comp, Alloc>::end(void) const {
-	return _tree.end();
+	return const_iterator(_tree.end());
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::const_iterator
 map<Key, T, Comp, Alloc>::begin(void) const {
-	return _tree.begin();
+	return const_iterator(_tree.begin());
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
@@ -287,13 +286,13 @@ map<Key, T, Comp, Alloc>::count(const Key &key) const {
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::iterator
 map<Key, T, Comp, Alloc>::find(const Key &key) {
-	return _tree.find(ft::make_pair(key, mapped_type()));
+	return iterator(_tree.find(ft::make_pair(key, mapped_type())));
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	
 typename map<Key, T, Comp, Alloc>::const_iterator
 map<Key, T, Comp, Alloc>::find(const Key &key) const {
-	return _tree.find(ft::make_pair(key, mapped_type()));
+	return const_iterator(_tree.find(ft::make_pair(key, mapped_type())));
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>	

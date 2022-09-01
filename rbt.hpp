@@ -175,6 +175,7 @@ rbt<T, Compare, Alloc>::rbt(
 template <typename T, typename Compare, typename Alloc >
 rbt<T, Compare, Alloc>::rbt(const rbt &other) 
 : _alloc(other._alloc), _root(NULL), _leaf(NULL), _size(0) {
+	create_leaf();
 	insert(other.begin(), other.end());
 }
 
@@ -362,8 +363,7 @@ template <typename T, typename Compare, typename Alloc >
 void
 rbt<T, Compare, Alloc>::erase(iterator first, iterator last) {
 	while (first != last) {
-		erase(first);
-		first++;
+		erase(first++);
 	}
 }
 
@@ -373,6 +373,12 @@ template <typename T, typename Compare, typename Alloc >
 typename rbt<T, Compare, Alloc>::iterator
 rbt<T, Compare, Alloc>::find(const_reference data) {
 	return iterator(find(_root, data));
+}
+
+template <typename T, typename Compare, typename Alloc >
+typename rbt<T, Compare, Alloc>::const_iterator
+rbt<T, Compare, Alloc>::find(const_reference data) const {
+	return const_iterator(find(_root, data));
 }
 
 template <typename T, typename Compare, typename Alloc >
@@ -705,10 +711,7 @@ rbt<T, Compare, Alloc>::erase(node_type *node) {
 	if (node->left != _leaf && node->right != _leaf) {
 		// 2 childs
 		node_type *successor = leftmost_node(node->right);
-		// swap_nodes(node, successor);
-		
-		node->data = successor->data;
-		node = successor;
+		swap_nodes(node, successor);
 	}
 
 	// 0 or 1 child
@@ -741,7 +744,7 @@ template <typename T, typename Compare, typename Alloc >
 void 
 rbt<T, Compare, Alloc>::erase_balance(node_type *node, node_type *parent) {
 
-	while (is_black(node) && node != _root) {
+	while (node != _leaf && is_black(node) && node != _root) {
 	
 		if (node == parent->left) {
 			node_type *uncle = parent->right;
@@ -807,48 +810,33 @@ template <typename T, typename Compare, typename Alloc >
 void 
 rbt<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
 
-		bool is_left_child_first = is_left_child(first);
-		bool is_left_child_second = is_left_child(second);
-		
-		node_type *tmpparent = first->parent;
-		node_type *tmpleft = (first->left == second) ? first : first->left;
-		node_type *tmpright = (first->right == second) ? first : first->right;
-		rb_color   tmpcolor = first->color;
+	bool is_left_child_first = first->parent && is_left_child(first);
+	bool is_left_child_second = second->parent && is_left_child(second);
+	
+	bool direct_child = (second->parent == first);
+	// bool rdirect_child = (first->parent == second);
 
-		first->parent = (second->parent == first) ? second : second->parent;
-		first->left = second->left;
-		first->right = second->right;
-		first->color = second->color;
+	node_type *tmpparent = first->parent;
+	node_type *tmpleft = first->left;
+	node_type *tmpright = first->right;
+	rb_color   tmpcolor = first->color;
 
-		second->parent = (tmpparent == second) ? first : tmpparent;		
-		second->left = tmpleft;
-		second->right = tmpright;
-		second->color = tmpcolor;
+	// Changing first node
+	first->color = second->color;
+	first->left = second->left;
+	first->right = second->right;
+	if (first->left != _leaf) {
+		first->left->parent = first;
+	}
+	if (first->right != _leaf) {
+		first->right->parent = first;
+	}
+	first->parent = (direct_child) ? second : second->parent;
 
-		if (first->left != _leaf) {
-			first->left->parent = first;
-		}
-		if (first->right != _leaf) {
-			first->right->parent = first;
-		}
-
-		if (second->left != _leaf) {
-			second->left->parent = second;
-		}
-		if (second->right != _leaf) {
-			second->right->parent = second;
-		}
-
-		// Changing first node
-		if (tmpparent == NULL) {
-			_root = second;
-		} else if (is_left_child_first) {
-			tmpparent->left = second;
-		} else {
-			tmpparent->right = second;
-		}
-
-		// Changing second node
+	if (direct_child) {
+		first->parent = second;
+	} else {
+		first->parent = second->parent;
 		if (second->parent == NULL) {
 			_root = first;
 		} else if (is_left_child_second) {
@@ -856,7 +844,38 @@ rbt<T, Compare, Alloc>::swap_nodes(node_type *first, node_type *second) {
 		} else {
 			second->parent->right = first;
 		}
+	}
 
+	// Changing second node
+	second->color = tmpcolor;
+	second->parent = tmpparent;
+	if (tmpparent == NULL) {
+		_root = second;
+	} else if (is_left_child_first) {
+		tmpparent->left = second;
+	} else {
+		tmpparent->right = second;
+	}
+
+	if (direct_child) {
+		if (is_left_child_second) {
+			second->right = tmpright;
+			second->left = first;
+		} else {
+			second->right = first;
+			second->left = tmpleft;
+		}
+	} else {
+		second->left = tmpleft;
+		second->right = tmpright;
+	}
+
+	if (second->left != _leaf) {
+		second->left->parent = second;
+	}
+	if (second->right != _leaf) {
+		second->right->parent = second;
+	}
 }
 
 template <typename T, typename Compare, typename Alloc >

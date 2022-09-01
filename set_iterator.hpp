@@ -94,7 +94,6 @@ private:
 public:
 	set_const_iterator(void) : _current(NULL) { }
 
-	explicit
 	set_const_iterator(const TreeIterator &node) : _current(node) { }
 
 	set_const_iterator(set_iterator<typename TreeIterator::non_const_iterator> it) : _current(it.base()) { }

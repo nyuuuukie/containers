@@ -20,6 +20,14 @@ namespace ft {
 	    template<typename U1, typename U2>
 		pair(const pair<U1, U2> &p)
 		: first(p.first), second(p.second) { }
+
+        pair& operator=(const pair &other) {
+			if (this != &other) {
+				first = other.first;
+				second = other.second;
+			}
+			return *this;
+		}
 	};
 
 	template<typename T1, typename T2>
