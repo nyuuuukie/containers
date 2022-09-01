@@ -55,10 +55,9 @@ namespace ft {
 		return typename iterator_traits<Iterator>::iterator_category(); 
 	}
 
-	template<class It>
+	template <class It>
 	typename ft::iterator_traits<It>::difference_type 
-	_distance(It first, It last, ft::input_iterator_tag)
-	{
+	_distance(It first, It last, ft::input_iterator_tag) {
 	    typename ft::iterator_traits<It>::difference_type result = 0;
 	    while (first != last) {
 	        ++first;
@@ -67,19 +66,15 @@ namespace ft {
 	    return result;
 	}
 	 
-	template<class It>
+	template <class It>
 	typename ft::iterator_traits<It>::difference_type 
-	_distance(It first, It last, ft::random_access_iterator_tag)
-	{
+	_distance(It first, It last, ft::random_access_iterator_tag) {
 	    return last - first;
 	}
 
-	template<class It>
+	template <class It>
 	typename ft::iterator_traits<It>::difference_type 
-	distance(It first, It last)
-	{
+	distance(It first, It last) {
 	    return _distance(first, last, ft::iterator_category(first));
 	}
-
-
 };

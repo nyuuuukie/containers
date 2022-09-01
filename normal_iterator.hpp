@@ -18,9 +18,9 @@ namespace ft {
             typedef typename _traits_type::reference           reference;
             typedef typename _traits_type::value_type          value_type;
             typedef typename _traits_type::difference_type     difference_type;
-            typedef random_access_iterator_tag 				   iterator_category;
+            typedef ft::random_access_iterator_tag 		       iterator_category;
 
-        normal_iterator() 
+        normal_iterator(void) 
         : _current(T()) { }
 
 		explicit
@@ -28,8 +28,13 @@ namespace ft {
         : _current(ptr) { }
 
         template<typename Iter>
-        normal_iterator( const normal_iterator<Iter, 
-		typename enable_if< are_same<Iter, typename Container::pointer>::value, Container>::type> &iter)
+        normal_iterator(
+            const normal_iterator<Iter, 
+		            typename enable_if< 
+                                are_same<
+                                    Iter, typename Container::pointer>
+                                ::value, Container>
+                            ::type> &iter)
         : _current(iter.base()) { }
 
 
