@@ -435,13 +435,14 @@ vector<T, Alloc>::erase(iterator first, iterator last) {
         _alloc.destroy(it.base());
     }
     
-    // Move trailing elements if there are
-    if (last != end()) {
-        _move(last.base(), first.base(), n);
+    pointer ptr = first.base();
+    _data_end = _data_end - n;
+    for (; ptr != _data_end; ptr++) {
+        _alloc.construct(ptr, *(ptr + n));
+        _alloc.destroy(ptr + n);
     }
 
-    _data_end = _data_end - n;
-    return first; // Not sure
+    return first;
 }
 
 template <typename T, typename Alloc>
@@ -486,18 +487,6 @@ vector<T, Alloc>::get_allocator(void) const {
 
 
 // Implementation
-template <typename T, typename Alloc>
-void
-vector<T, Alloc>::_move(pointer src, pointer dst, size_type n) {
-    while (n != 0) {
-        _alloc.construct(dst, *src);
-        _alloc.destroy(src);
-        src++;
-        dst++;
-        n--;
-    }
-}
-
 template <typename T, typename Alloc>
 inline u_int64_t
 vector<T, Alloc>::_next_capacity(u_int64_t capacity) {
@@ -565,17 +554,18 @@ template <typename T, typename Alloc>
 template <typename InputIt>
 void
 vector<T, Alloc>::_noalloc_insert_impl(iterator pos, size_type n, InputIt first, InputIt last) {	
-    iterator dst = end() + n;
-    iterator src = pos + n - 1;
+ 
+    pointer ptr = pos.base();
+    pointer dst = _data_end + n;
+    pointer src = ptr + n - 1;
+    _data_end += n; 
+    for (; dst != src; dst--) {
+        _alloc.construct(dst, *(dst - n));
+        _alloc.destroy((dst - n));
+    }
 
-    for (; first != last; first++) {
-        _alloc.construct(dst.base(), *src);
-        _alloc.destroy(src.base());
-        _alloc.construct(src.base(), *first);
-
-        src--;
-        dst--;
-        _data_end++;
+    for (; first != last; first++, ptr++) {
+        _alloc.construct(ptr, *first);
     }
 }
 
@@ -614,19 +604,19 @@ vector<T, Alloc>::_realloc_insert_impl(iterator pos, size_type n, InputIt first,
 
 template <typename T, typename Alloc>
 void
-vector<T, Alloc>::_noalloc_insert_impl(iterator pos, size_type n, const value_type &val) {
+vector<T, Alloc>::_noalloc_insert_impl(iterator pos, size_type n, const value_type &val) {	
+ 
+    pointer ptr = pos.base();
+    pointer dst = _data_end + n;
+    pointer src = ptr + n - 1;
+    _data_end += n;
+    for (; dst != src; dst--) {
+        _alloc.construct(dst, *(dst - n));
+        _alloc.destroy((dst - n));
+    }
 
-    iterator dst = end() + n;
-    iterator src = pos + n - 1;
-
-    for (; n != 0; n--) {
-        _alloc.construct(dst.base(), *src);
-        _alloc.destroy(src.base());
-        _alloc.construct(src.base(), val);
-
-        src--;
-        dst--;
-        _data_end++;
+    for (; n > 0; n--, ptr++) {
+        _alloc.construct(ptr, val);
     }
 }
 
