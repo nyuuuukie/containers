@@ -32,10 +32,10 @@ SRCS_DIR     = tester
 OBJS_DIR     = .obj
 INCLUDE_DIR  = include
 SRCS_LIST    = main.cpp        \
-			   map_test.cpp    \
-			   set_test.cpp    \
-			   stack_test.cpp  \
-			   vector_test.cpp \
+               map_test.cpp    \
+               set_test.cpp    \
+               stack_test.cpp  \
+               vector_test.cpp \
 
 SRCS  = $(addprefix $(SRCS_DIR)/, ${SRCS_LIST})
 
