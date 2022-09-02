@@ -1,6 +1,6 @@
-.PHONY: clean fclean re all libjson makedir comp
+.PHONY: clean fclean re all makedir
 
-NAME=tester
+NAME = tester
 
 ###################################################################################
 #                               Compiler & Flags                                  #
@@ -15,7 +15,7 @@ ifeq ($(DEBUG), 1)
 endif
 
 ###################################################################################
-#                                    Tests                                        #
+#                                   Tester                                        #
 ###################################################################################
 
 CYCLES	   = 1000
@@ -61,7 +61,7 @@ else
 endif
 
 $(TESTER_STD): $(SRCS)
-	@$(CXX) $(CPPFLAGS) $^ -o $@ -D STD
+	@$(CXX) $(CPPFLAGS) $^ -o $@ -D _CONTAINER_TESTER_STD
 
 $(TESTER_FT): $(SRCS)
 	@$(CXX) $(CPPFLAGS) $^ -o $@ -I ./$(INCLUDE_DIR)

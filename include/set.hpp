@@ -36,8 +36,9 @@ class set {
         typedef typename iterator::difference_type     	difference_type;
 
 	private:
-        tree_type _tree;
-		key_compare _comp;
+        tree_type		_tree;
+		key_compare		_comp;
+		allocator_type	_alloc;
 
     public:
 		set(void);
@@ -112,25 +113,26 @@ class set {
 		
 	template <typename Key, typename Comp, typename Alloc> 
 	set<Key, Comp, Alloc>::set(const Comp &comp, const Alloc &alloc)
-	: _comp(comp) {}
+	: _comp(comp), _alloc(alloc) {}
 
 	template <typename Key, typename Comp, typename Alloc> 
 	template <class InputIt>
 	set<Key, Comp, Alloc>::set(InputIt first, InputIt last, const Comp &comp, const Alloc &alloc)
-	: _comp(comp) {
+	: _comp(comp), _alloc(alloc) {
 		insert(first, last);
 	}
 
 	template <typename Key, typename Comp, typename Alloc> 
 	set<Key, Comp, Alloc>::set(const set &other)
-	: _tree(other._tree), _comp(other._comp) {}
+	: _tree(other._tree), _comp(other._comp), _alloc(other._alloc) {}
 
 	template <typename Key, typename Comp, typename Alloc> 
 	set<Key, Comp, Alloc> &
 	set<Key, Comp, Alloc>::operator=(const set &other) {
 		if (this != &other) {
-			_tree = other._tree;
-			_comp = other._comp;
+			_tree  = other._tree;
+			_comp  = other._comp;
+			_alloc = other._alloc;
 		}
 		return *this;
 	}

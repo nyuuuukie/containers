@@ -428,7 +428,6 @@ template <typename T, typename Alloc>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::erase(iterator first, iterator last) {
 
-    size_type offset = static_cast<size_type>(ft::distance(begin(), first));
     size_type n = static_cast<size_type>(ft::distance(first, last));
     
     for (iterator it = first; it != last; ++it) {

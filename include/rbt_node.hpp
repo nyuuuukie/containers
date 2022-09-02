@@ -16,9 +16,9 @@ namespace ft {
 		rbt_node(T data)
 			: data(data)
 			, color(red)
-			, parent(NULL)
 			, left(NULL)
-			, right(NULL) { };
+			, right(NULL)
+			, parent(NULL) { };
 	};
 
 	template<class T>

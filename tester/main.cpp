@@ -3,10 +3,10 @@
 #include <time.h>
 #include <set>
 
-#define VECTOR  "vector"
-#define STACK   "stack"
-#define MAP     "map"
-#define SET     "set"
+# define VECTOR  "vector"
+# define STACK   "stack"
+# define MAP     "map"
+# define SET     "set"
 
 void vector_test(void);
 void stack_test(void);
@@ -63,7 +63,8 @@ int main(int argc, char **argv) {
     }
     clock_t end_time = clock();
 
-    double avg = ((double)(end_time - start_time) / CLOCKS_PER_SEC) / cycles;
-    std::cerr << "[" << argv[0] << "] cycles: " << cycles << ", avg: " << avg << "s" << std::endl;
+    double total = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+    double avg = total / cycles;
+    std::cerr << "[" << argv[0] << "] cycles: " << cycles << ", total: " << total << "sec, avg: " << avg << "sec" << std::endl;
     return 0;
 }

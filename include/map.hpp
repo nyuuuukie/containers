@@ -53,7 +53,9 @@ public:
 	typedef typename iterator::difference_type     	difference_type;
 
 private:
-	tree_type _tree;
+	tree_type		_tree;
+	key_compare		_comp;
+	allocator_type	_alloc;
 
 public:
 	map(void);
@@ -137,23 +139,27 @@ template <typename Key, typename T, typename Comp, typename Alloc>
 map<Key, T, Comp, Alloc>::map(void) {}
 
 template <typename Key, typename T, typename Comp, typename Alloc>
-map<Key, T, Comp, Alloc>::map(const key_compare &comp, const allocator_type &alloc) {}
+map<Key, T, Comp, Alloc>::map(const key_compare &comp, const allocator_type &alloc)
+: _comp(comp), _alloc(alloc) {}
 
 
 template <typename Key, typename T, typename Comp, typename Alloc>
 template <class InputIt>
-map<Key, T, Comp, Alloc>::map(InputIt first, InputIt last, const key_compare &comp, const Alloc &alloc) {
+map<Key, T, Comp, Alloc>::map(InputIt first, InputIt last, const key_compare &comp, const Alloc &alloc)
+: _comp(comp), _alloc(alloc) {
 	// Change comparator and allocator ?
 	insert(first, last);
 }
 
 template <typename Key, typename T, typename Comp, typename Alloc>
-map<Key, T, Comp, Alloc>::map(const map& other) : _tree(other._tree) {}
+map<Key, T, Comp, Alloc>::map(const map& other) : _tree(other._tree), _comp(other._comp), _alloc(other._alloc) {}
  
 template <typename Key, typename T, typename Comp, typename Alloc>
 map<Key, T, Comp, Alloc>& map<Key, T, Comp, Alloc>::operator=(const map &other) {
 	if (this != &other) {
 		_tree = other._tree;
+		_comp = other._comp;
+		_alloc = other._alloc;
 	}
 	return *this;
 }
