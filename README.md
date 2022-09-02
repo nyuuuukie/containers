@@ -48,8 +48,10 @@ int main() {
         tree.insert(i);
     }
 
-    ft::rbt_visualizer<int> rbv;
-    rbv.visualize(tree);
+    ft::rbt_visualizer rbv(tree);
+    // or
+    // ft::rbt_visualizer rbv;
+    // rbv.visualize(tree);
     
     return 0;
 }
@@ -68,4 +70,17 @@ clang++ test.cpp -I ~/Desktop/STL-containers
 ```
 
 ## Tests
+
+Use [Makefile](https://github.com/mhufflep/STL-containers/blob/main/Makefile) to change following vars:
+* `DEBUG`  to compile tests with debug flag
+* `CYCLES` to change amount of the test's runs
+* `OUTPUT_FT` and `OUTPUT_STD` to set custom output filename
+* `TESTER_FT` and `TESTER_STD` to set custom tester executable name
+
+Run `make` and tester will compare the output from the stl containers to ft automatically.
+
+If **no differences** found, output files and tester executables **will be removed**.
+
+Otherwise, you can compare output files manually and find mismatches. Tester executables **won't be deleted** as well, so you could run them and debug by yourself.
+
 
