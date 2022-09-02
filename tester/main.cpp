@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     bool _stack = false;
     bool _vector = false;
 
-    int cycles = std::atoi(argv[1]);
+    int cycles = argc > 1 ? std::atoi(argv[1]) : 1;
     if (cycles < 1) {
         return print_usage(argv);
     }
