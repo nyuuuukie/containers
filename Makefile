@@ -40,6 +40,8 @@ SRCS_LIST    = main.cpp              \
 			   is_integral_test.cpp  \
 			   reverse_comp_test.cpp \
 
+CONT_SRCS    =
+
 SRCS  = $(addprefix $(SRCS_DIR)/, ${SRCS_LIST})
 
 ###################################################################################
@@ -66,7 +68,7 @@ endif
 $(TESTER_STD): $(SRCS)
 	@$(CXX) $(CPPFLAGS) $^ -o $@ -D _CONTAINER_TESTER_STD
 
-$(TESTER_FT): $(SRCS)
+$(TESTER_FT): $(SRCS) $(CONT_SRCS)
 	@$(CXX) $(CPPFLAGS) $^ -o $@ -I ./$(INCLUDE_DIR)
 
 clean:

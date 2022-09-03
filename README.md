@@ -72,6 +72,8 @@ clang++ test.cpp -I ~/Desktop/STL-containers
 ## Tests
 
 Use [Makefile](https://github.com/mhufflep/STL-containers/blob/main/Makefile) to change following vars:
+* `INCLUDE_DIR` to specify root folder of your containers
+* `CONT_SRCS` to specify list of all **not** .hpp files of your container (if there are)
 * `DEBUG`  to compile tests with debug flag
 * `CYCLES` to change amount of the test's runs
 * `OUTPUT_FT` and `OUTPUT_STD` to set custom output filename
