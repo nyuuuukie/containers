@@ -7,6 +7,8 @@ namespace ft = std;
 # include "stack.hpp"
 #endif
 
+typedef int key_t;
+
 template<typename T>
 class StackCheck : public ft::stack<T> {
 
@@ -50,40 +52,43 @@ print_stack(ft::stack<T>& st) {
 void
 stack_test(void) {
 
-    int val = 5;
-    StackCheck<int>::value_type stack_value_type = 0;
-    StackCheck<int>::size_type stack_size_type = 0;
-    StackCheck<int>::reference stack_reference = val;
-    StackCheck<int>::const_reference stack_const_reference = val;
+    key_t val = 5;
+    StackCheck<key_t>::value_type stack_value_type = 0;
+    StackCheck<key_t>::size_type stack_size_type = 0;
+    StackCheck<key_t>::reference stack_reference = val;
+    StackCheck<key_t>::const_reference stack_const_reference = val;
 	stack_value_type = 0;
 	stack_size_type = 0;
 	stack_reference = stack_const_reference;
 
 	std::cout << "---------- stack:" << std::endl;
 
-	int	first[] = { 3, 14, 15, 92, 65, 359 };
-	int	r_first[] = { 359, 65, 92, 15, 14, 3 };
+	const key_t arr[] = { 21, 42, 84, 168, 336, 672 };
+	const key_t r_arr[] = { 672, 336, 168, 84, 42, 21 };
+
+	const std::size_t size_arr = sizeof(arr) / sizeof(arr[0]);
+	const std::size_t size_r_arr = sizeof(r_arr) / sizeof(r_arr[0]);
 
 	std::cout << "----- Member functions:" << std::endl;
 	{
 		std::cout << " constructor:" << std::endl;
-		ft::stack<int> st;
+		ft::stack<key_t> st;
 		print_stack(st);
 		std::cout << std::endl;
 	}
 
 	{
 		std::cout << " empty (true):" << std::endl;
-		ft::stack<int> st;
+		ft::stack<key_t> st;
 		print_stack(st);
 		std::cout << std::endl;
 	}
 
 	{
 		std::cout << " empty (false):" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(r_first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st.push(r_arr[i]);
 		}
 		print_stack(st);
 		std::cout << std::endl;
@@ -91,9 +96,9 @@ stack_test(void) {
 
 	{
 		std::cout << " size:" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(r_first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st.push(r_arr[i]);
 		}
 		print_stack(st);
 		std::cout << std::endl;
@@ -101,9 +106,9 @@ stack_test(void) {
 
 	{
 		std::cout << " top:" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(r_first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st.push(r_arr[i]);
 		}
 		std::cout << " content : [ " << st.top() << " ]" << std::endl;
 		std::cout << std::endl;
@@ -111,9 +116,9 @@ stack_test(void) {
 
 	{
 		std::cout << " push:" << std::endl;
-		ft::stack<int>	st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(r_first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st.push(r_arr[i]);
 		}
 		print_stack(st);
 		std::cout << std::endl;
@@ -121,9 +126,9 @@ stack_test(void) {
 
 	{
 		std::cout << " pop:" << std::endl;
-		ft::stack<int>	st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(r_first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st.push(r_arr[i]);
 		}
 		st.pop();
 		print_stack(st);
@@ -132,9 +137,9 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator== (true):" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_arr; i++) {
+			st.push(arr[i]);
 		}
 		std::cout << " s == s: " << (st == st) << std::endl;
 		std::cout << std::endl;
@@ -142,13 +147,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator== (false):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s1 == s2: " << (st1 == st2) << std::endl;
 		std::cout << std::endl;
@@ -156,9 +161,9 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator!= (false):" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_arr; i++) {
+			st.push(arr[i]);
 		}
 		std::cout << " s != s: " << (st != st) << std::endl;
 		std::cout << std::endl;
@@ -166,13 +171,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator!= (true):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s1 != s2: " << (st1 != st2) << std::endl;
 		std::cout << std::endl;
@@ -180,9 +185,9 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator< (false):" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_arr; i++) {
+			st.push(arr[i]);
 		}
 		std::cout << " s < s: " << (st < st) << std::endl;
 		std::cout << std::endl;
@@ -190,13 +195,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator< (true):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s1 < s2: " << (st1 < st2) << std::endl;
 		std::cout << std::endl;
@@ -204,13 +209,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " Operator<= (false):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s2 <= s1: " << (st2 <= st1) << std::endl;
 		std::cout << std::endl;
@@ -218,13 +223,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator<= (true):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s1 <= s2: " << (st1 <= st2) << std::endl;
 		std::cout << std::endl;
@@ -232,9 +237,9 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator> (false):" << std::endl;
-		ft::stack<int> st;
-		for (size_t i = 0; i < 6; i++) {
-			st.push(first[i]);
+		ft::stack<key_t> st;
+		for (size_t i = 0; i < size_arr; i++) {
+			st.push(arr[i]);
 		}
 		std::cout << " s > s: " << (st > st) << std::endl;
 		std::cout << std::endl;
@@ -242,13 +247,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator> (true):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s2 > s1: " << (st2 > st1) << std::endl;
 		std::cout << std::endl;
@@ -256,13 +261,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator>= (false):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s1 >= s2: " << (st1 >= st2) << std::endl;
 		std::cout << std::endl;
@@ -270,13 +275,13 @@ stack_test(void) {
 	
 	{
 		std::cout << " operator>= (true):" << std::endl;
-		ft::stack<int> st1;
-		ft::stack<int> st2;
-		for (size_t i = 0; i < 6; i++) {
-			st1.push(first[i]);
+		ft::stack<key_t> st1;
+		ft::stack<key_t> st2;
+		for (size_t i = 0; i < size_arr; i++) {
+			st1.push(arr[i]);
 		}
-		for (size_t i = 0; i < 6; i++) {
-			st2.push(r_first[i]);
+		for (size_t i = 0; i < size_r_arr; i++) {
+			st2.push(r_arr[i]);
 		}
 		std::cout << " s2 >= s1: " << (st2 >= st1) << std::endl;
 	}

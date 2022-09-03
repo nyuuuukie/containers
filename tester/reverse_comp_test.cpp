@@ -15,7 +15,8 @@
 
 void
 reverse_comp_test(void) {
-    int arr[] = {0, 1, 2, 3};
+    
+    int arr[] = {21, 42, 84, 168};
     ft::reverse_iterator<int *>
         x(&arr[4]),
         y(&arr[4]),

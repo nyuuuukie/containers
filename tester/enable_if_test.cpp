@@ -18,7 +18,7 @@ template <typename T>
 std::string
 to_str(T t1, typename ft::enable_if< ft::is_same<std::string, T>::value, T >::type t) {
     (void)t1;
-    return (t);
+    return t;
 }
 
 template <typename T>
@@ -28,7 +28,7 @@ to_str(T t1, typename ft::enable_if< !ft::is_same<std::string, T>::value, T >::t
     std::stringstream ss;
     ss << t;
     std::string str = ss.str();
-    return (str);
+    return str;
 }
 
 void 
