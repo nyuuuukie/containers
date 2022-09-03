@@ -5,7 +5,7 @@ namespace ft {
 	struct true_type { };
   	struct false_type { };
 
-	template<bool, typename>
+	template<bool, typename = void>
     struct enable_if { };
 
   	template<typename T>

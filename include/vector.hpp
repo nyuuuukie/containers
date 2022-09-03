@@ -44,6 +44,7 @@ public:
     vector(InputIt first, InputIt last, const allocator_type &alloc = allocator_type());
 
     vector(const vector &other);
+
     vector &operator=(const vector &other);
     
     ~vector(void);
@@ -88,7 +89,9 @@ public:
     void pop_back(void);
 
     template <typename InputIt>
-    void insert(iterator pos, InputIt first, InputIt last);
+    void insert(iterator pos, InputIt first,
+        typename enable_if< are_same < typename is_integral<InputIt>::type, integral_false_type>::value, InputIt>::type last);
+
     void insert(iterator pos, size_type n, const value_type &val);
     iterator insert(iterator pos, const value_type &val);
 
@@ -256,7 +259,7 @@ vector<T, Alloc>::resize(size_type n, value_type val) {
         for (pointer pos = _beg + n; pos != _data_end; pos++) {
             _alloc.destroy(pos);
         }
-        _data_end = _beg + n; // start + n + 1 maybe ?
+        _data_end = _beg + n;
     }
 }
 
@@ -412,7 +415,7 @@ vector<T, Alloc>::insert(iterator pos, const value_type& val) {
 template <typename T, typename Alloc>
 template <typename InputIt>
 void
-vector<T, Alloc>::insert(iterator pos, InputIt first, InputIt last) {
+vector<T, Alloc>::insert(iterator pos, InputIt first, typename enable_if< are_same < typename is_integral<InputIt>::type, integral_false_type>::value, InputIt >::type last) {
     typedef typename is_integral<InputIt>::type check_integral;
     
     _insert(pos, first, last, check_integral());
