@@ -14,15 +14,15 @@ namespace ft {
 	};
 
  	
-	// are_same
+	// is_same
 	template<typename, typename>
-    struct are_same {
+    struct is_same {
 		enum { value = 0 };
 		typedef false_type type;
     };
 
 	template<typename T>
-    struct are_same<T, T> {
+    struct is_same<T, T> {
 		enum { value = 1 };
 		typedef true_type type;
     };

@@ -90,7 +90,7 @@ public:
 
     template <typename InputIt>
     void insert(iterator pos, InputIt first,
-        typename enable_if< are_same < typename is_integral<InputIt>::type, integral_false_type>::value, InputIt>::type last);
+        typename enable_if< is_same < typename is_integral<InputIt>::type, integral_false_type>::value, InputIt>::type last);
 
     void insert(iterator pos, size_type n, const value_type &val);
     iterator insert(iterator pos, const value_type &val);
@@ -415,7 +415,7 @@ vector<T, Alloc>::insert(iterator pos, const value_type& val) {
 template <typename T, typename Alloc>
 template <typename InputIt>
 void
-vector<T, Alloc>::insert(iterator pos, InputIt first, typename enable_if< are_same < typename is_integral<InputIt>::type, integral_false_type>::value, InputIt >::type last) {
+vector<T, Alloc>::insert(iterator pos, InputIt first, typename enable_if< is_same < typename is_integral<InputIt>::type, integral_false_type>::value, InputIt >::type last) {
     typedef typename is_integral<InputIt>::type check_integral;
     
     _insert(pos, first, last, check_integral());

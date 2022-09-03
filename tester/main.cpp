@@ -7,6 +7,11 @@
 # define STACK   "stack"
 # define MAP     "map"
 # define SET     "set"
+# define EXTRA   "extra"
+
+void is_integral_test(void);
+void enable_if_test(void);
+void reverse_comp_test(void);
 
 void vector_test(void);
 void stack_test(void);
@@ -26,6 +31,7 @@ int main(int argc, char **argv) {
     bool _map = false;
     bool _stack = false;
     bool _vector = false;
+    bool _extra = false;
 
     int cycles = argc > 1 ? std::atoi(argv[1]) : 1;
     if (cycles < 1) {
@@ -43,6 +49,8 @@ int main(int argc, char **argv) {
                 _set = true;
             } else if (str == MAP) {
                 _map = true;
+            } else if (str == EXTRA) {
+                _extra = true;
             } else {
                 return print_usage(argv);
             }
@@ -52,6 +60,13 @@ int main(int argc, char **argv) {
         _map = true;
         _stack = true;
         _vector = true;
+        _extra = true;
+    }
+
+    if (_extra) {
+        enable_if_test();
+        reverse_comp_test();
+        is_integral_test();
     }
 
     clock_t start_time = clock();
@@ -65,6 +80,9 @@ int main(int argc, char **argv) {
 
     double total = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
     double avg = total / cycles;
-    std::cerr << "[" << argv[0] << "] cycles: " << cycles << ", total: " << total << "sec, avg: " << avg << "sec" << std::endl;
+    std::cerr << std::setw(13) << std::left << argv[0] << "-> ";
+    std::cerr << "cycles: " << cycles << ", ";
+    std::cerr << "total: " << total << " sec" << ", ";
+    std::cerr << "avg: "   << avg   << " sec" << std::endl;
     return 0;
 }

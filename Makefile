@@ -31,11 +31,14 @@ TESTER_FT  = tester_ft
 SRCS_DIR     = tester
 OBJS_DIR     = .obj
 INCLUDE_DIR  = include
-SRCS_LIST    = main.cpp        \
-               map_test.cpp    \
-               set_test.cpp    \
-               stack_test.cpp  \
-               vector_test.cpp \
+SRCS_LIST    = main.cpp              \
+               map_test.cpp          \
+               set_test.cpp          \
+               stack_test.cpp        \
+               vector_test.cpp       \
+			   enable_if_test.cpp    \
+			   is_integral_test.cpp  \
+			   reverse_comp_test.cpp \
 
 SRCS  = $(addprefix $(SRCS_DIR)/, ${SRCS_LIST})
 

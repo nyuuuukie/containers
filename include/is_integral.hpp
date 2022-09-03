@@ -2,7 +2,6 @@
 
 #include "type_traits.hpp"
 #include "iterator_traits.hpp"
-// #include <uchar.h>
 
 namespace ft {
 	
@@ -44,6 +43,10 @@ namespace ft {
 	template<>
 	struct __is_integral__<unsigned short>
 	: public integral_true_type { };
+
+	template<>
+	struct __is_integral__<wchar_t>
+    : public integral_true_type {};
 
 	template<>
 	struct __is_integral__<int>

@@ -31,7 +31,7 @@ namespace ft {
         normal_iterator(
             const normal_iterator<Iter, 
 		            typename enable_if< 
-                                are_same<
+                                is_same<
                                     Iter, typename Container::pointer>
                                 ::value, Container>
                             ::type> &iter)
