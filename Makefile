@@ -67,8 +67,8 @@ $(TESTER_FT): $(SRCS)
 	@$(CXX) $(CPPFLAGS) $^ -o $@ -I ./$(INCLUDE_DIR)
 
 clean:
-	@rm -f ${OUTPUT_FT} ${OUTPUT_STD} 
-	@rm -f ${TESTER_FT} ${TESTER_STD}
+	@rm -rf ${OUTPUT_FT} ${OUTPUT_STD} 
+	@rm -rf ${TESTER_FT}* ${TESTER_STD}*
 
 fclean: clean
 

@@ -10,8 +10,8 @@ TESTER_FT="tester_ft"
 OUTPUT_STD_NAME="output_std"
 OUTPUT_FT_NAME="output_ft"
  
-${CXX} main.cpp tests/*.cpp -I ${FT_ROOT_FOLDER} ${DEBUG} -std=c++98 -o ${TESTER_FT}
-${CXX} main.cpp tests/*.cpp -I ${FT_ROOT_FOLDER} ${DEBUG} -std=c++98 -o ${TESTER_STD} -D STD
+${CXX} *.cpp -I ${FT_ROOT_FOLDER} ${DEBUG} -std=c++98 -o ${TESTER_FT}
+${CXX} *.cpp -I ${FT_ROOT_FOLDER} ${DEBUG} -std=c++98 -o ${TESTER_STD} -D _CONTAINER_TESTER_STD
 
 ./${TESTER_STD} ${CYCLES} > ${OUTPUT_STD_NAME}
 ./${TESTER_FT} ${CYCLES} > ${OUTPUT_FT_NAME}
