@@ -58,7 +58,7 @@ int main() {
 ```
 
 will produce this output to stdout: <br>
-<img src="./screenshots/visualizer.png" width=600px />
+<img src="./screenshots/visualize.png" width=800px />
 
 :warning: `Large trees may not fit on the screen. In that case, zoom out to see the correct tree picture`
 
