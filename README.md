@@ -60,6 +60,8 @@ int main() {
 will produce this output to stdout: <br>
 <img src="./screenshots/visualizer.png" width=600px />
 
+:warning: `Large trees may not fit on the screen. In that case, zoom out to see the correct tree picture`
+
 ## Compile
 
 To compile properly you need to explicitly specify the path to the main folder of this repo.
