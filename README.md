@@ -59,7 +59,9 @@ int main() {
 ```
 
 will produce this output to stdout: <br>
-<img src="./screenshots/visualize.png" width=2000px />
+<!-- <img src="./screenshots/visualize.png" width=2000px /> -->
+![GitHub-Mark-Light](https://github.com/mhufflep/STL-containers/blob/main/screenshots/visualize_dark.png#gh-dark-mode-only)
+![GitHub-Mark-Dark](https://github.com/mhufflep/STL-containers/blob/main/screenshots/visualize_light.png#gh-light-mode-only)
 
 :warning: `Large trees may not fit on the screen. In that case, zoom out to see the correct tree picture`
 
