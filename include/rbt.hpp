@@ -531,45 +531,6 @@ rbt<T, Compare, Alloc>::post_order(void (*func)(iterator)) {
     post_order(_root, func);
 }
 
-
-// Non-member comparison overloads
-template <typename T, typename Compare, typename Alloc >
-bool
-operator==(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
-	return x.size() == y.size() && ft::equal(x.begin(), x.end(), y.begin());
-}
-
-template <typename T, typename Compare, typename Alloc >
-bool
-operator<(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
-	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
-}
-
-template <typename T, typename Compare, typename Alloc >
-bool
-operator!=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
-	return !(x == y);
-}
-
-template <typename T, typename Compare, typename Alloc >
-bool
-operator>(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
-	return y < x;
-}
-
-template <typename T, typename Compare, typename Alloc >
-bool
-operator<=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
-	return !(y < x);
-}
-
-template <typename T, typename Compare, typename Alloc >
-bool
-operator>=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
-	return !(x < y);
-}
-
-
 // Internal implementation
 template <typename T, typename Compare, typename Alloc >
 void rbt<T, Compare, Alloc>::rotate_left(node_type *node) {
@@ -991,5 +952,43 @@ rbt<T, Compare, Alloc>::post_order(node_type *node, void (*func)(iterator)) cons
 		func(node);
 	}
 };
+
+
+// Non-member comparison overloads
+template <typename T, typename Compare, typename Alloc >
+bool
+operator==(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return x.size() == y.size() && ft::equal(x.begin(), x.end(), y.begin());
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator<(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator!=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return !(x == y);
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator>(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return y < x;
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator<=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return !(y < x);
+}
+
+template <typename T, typename Compare, typename Alloc >
+bool
+operator>=(const rbt<T, Compare, Alloc> &x, const rbt<T, Compare, Alloc> &y) {
+	return !(x < y);
+}
 
 };
