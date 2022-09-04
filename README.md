@@ -44,9 +44,10 @@ These lines
 int main() {
 
     ft::rbt<int> tree;
-    for (int i = 1; i < 10; i++) {
-        tree.insert(i);
+    for (int i = 1; i < 20; i++) {
+        tree.insert(rand() % 100);
     }
+    tree.erase(65);
 
     ft::rbt_visualizer rbv(tree);
     // or
@@ -58,7 +59,7 @@ int main() {
 ```
 
 will produce this output to stdout: <br>
-<img src="./screenshots/visualize.png" width=800px />
+<img src="./screenshots/visualize.png" width=2000px />
 
 :warning: `Large trees may not fit on the screen. In that case, zoom out to see the correct tree picture`
 
