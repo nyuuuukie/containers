@@ -3,6 +3,7 @@
 #include <cmath>
 #include <memory>
 #include <iostream>
+#include <sstream>
 
 #include "is_integral.hpp"
 #include "normal_iterator.hpp"
@@ -293,9 +294,9 @@ void
 vector<T, Alloc>::_range_check(size_type n) const {
 
     if (n >= size()) {
-        char msg[100] = {0};
-        sprintf(msg, "vector::range_check: %zu >= %zu", n, size());
-        throw std::out_of_range(msg);
+        std::ostringstream ss;
+        ss << "vector::at: (n == " << n << ")";
+        throw std::out_of_range(ss.str());
     }
 }
 
