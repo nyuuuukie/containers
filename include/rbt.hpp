@@ -133,6 +133,7 @@ template <typename T, typename Compare, typename Alloc >
 void
 rbt<T, Compare, Alloc>::create_leaf(void) {
 	_leaf = _alloc.allocate(1);
+	_alloc.construct(_leaf, value_type());
 	_leaf->color = black;
 	_leaf->left = NULL;
 	_leaf->right = NULL;
@@ -698,7 +699,9 @@ rbt<T, Compare, Alloc>::erase(node_type *node) {
 		_leaf->parent = rightmost_node(_root);
 	}
 	
-	destroy_node(node);
+	if (node != _leaf) {
+		destroy_node(node);
+	}
 	_size--;
 }
 
@@ -863,6 +866,7 @@ rbt<T, Compare, Alloc>::destroy_node(node_type *node) {
 	node->left = NULL;
 	node->right = NULL;
 
+	_alloc.destroy(node);
 	_alloc.deallocate(node, 1);
 }
 

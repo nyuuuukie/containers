@@ -8,6 +8,8 @@
 # define SET     "set"
 # define EXTRA   "extra"
 
+void map_comp_use_test(void);
+void subject_test(void);
 void is_integral_test(void);
 void enable_if_test(void);
 void reverse_comp_test(void);
@@ -65,16 +67,18 @@ main(int argc, char **argv) {
     }
 
     clock_t start_time = clock();
+    if (_extra) {
+        subject_test();
+        enable_if_test();
+        is_integral_test();
+        reverse_comp_test();
+        map_comp_use_test();
+    }
     for (int i = 0; i < cycles; i++) {
         if (_vector) vector_test();
         if (_stack)  stack_test();
         if (_map)    map_test();
         if (_set)    set_test();
-        if (_extra) {
-            enable_if_test();
-            is_integral_test();
-            reverse_comp_test();
-        }
     }
     clock_t end_time = clock();
 

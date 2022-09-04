@@ -18,7 +18,7 @@ endif
 #                                   Tester                                        #
 ###################################################################################
 
-CYCLES	   = 1000
+CYCLES	   = 100
 OUTPUT_STD = output_std
 OUTPUT_FT  = output_ft
 TESTER_STD = tester_std
@@ -36,9 +36,11 @@ SRCS_LIST    = main.cpp              \
                set_test.cpp          \
                stack_test.cpp        \
                vector_test.cpp       \
+			   subject_test.cpp      \
 			   enable_if_test.cpp    \
 			   is_integral_test.cpp  \
 			   reverse_comp_test.cpp \
+			   map_comp_use_test.cpp \
 
 CONT_SRCS    =
 
