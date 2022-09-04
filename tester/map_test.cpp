@@ -213,7 +213,7 @@ map_test(void) {
 		try {
 			map.at(nonexist_key);
 		} catch(const std::exception &e) {
-			std::cout << "  exception: " << e.what() << std::endl;
+			std::cout << "  exception caught: OK" << std::endl;
 		}
 		std::cout << std::endl;
 		print_map(map);
@@ -238,7 +238,7 @@ map_test(void) {
 		try {
 			map.at(nonexist_key);
 		} catch(const std::exception &e) {
-			std::cout << "  exception:  " << e.what() << std::endl;
+			std::cout << "  exception caught: OK" << std::endl;
 		}
 		std::cout << std::endl;
 		print_map(map);
