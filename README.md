@@ -86,8 +86,8 @@ Use [Makefile](https://github.com/mhufflep/STL-containers/blob/main/Makefile) to
 
 Run `make` and tester will compare the output from the stl containers to ft automatically.
 
-If **no differences** found, output files and tester executables **will be removed**.
+If `no differences` found, output files and tester executables `will be removed`.
 
-Otherwise, you can compare output files manually and find mismatches. Tester executables **won't be deleted** as well, so you could run them and debug by yourself.
+`Otherwise`, you can compare output files manually and find mismatches. Tester executables `won't be deleted` as well, so you could run them and debug by yourself.
 
 
