@@ -1,4 +1,4 @@
-# STL-containers
+# containers
 
 ## Description
 
